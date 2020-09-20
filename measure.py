@@ -8,10 +8,10 @@ config = yaml.load(open('config.yml'), Loader=yaml.FullLoader)
 parity = serial.PARITY_NONE
 rtscts = 1
 ENCODING = "iso8859-1"
-DEBUG = 0
+DEBUG = False
 
 def gpib_send(gpib, string):
-	if (DEBUG == 1):
+	if DEBUG:
 		print(">>>" + string)
 	gpib.write((string + "\n").encode(ENCODING))
 
@@ -127,7 +127,7 @@ def main() -> None:
 
 	if (args.verbose):
 		print("<<<DEBUG MODE ACTIVE>>>")
-		DEBUG = 1
+		DEBUG = True
 
 	with serial.Serial(config['serialdevice'], config['baudrate'], timeout=int(config['timeout']), parity=parity, rtscts=rtscts) as gpib:
 		initialize_prologix(gpib, config['gpib_remote_addr'])
