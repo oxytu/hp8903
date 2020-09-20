@@ -1,6 +1,5 @@
 import serial
 import yaml
-import re
 import argparse
 from hp8903 import *
 
