@@ -8,7 +8,7 @@ config = yaml.load(open('config.yml'), Loader=yaml.FullLoader)
 parity = serial.PARITY_NONE
 rtscts = 1
 ENCODING = "iso8859-1"
-DEBUG = False
+DEBUG = True
 
 def gpib_send(gpib, string):
 	if DEBUG:
