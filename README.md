@@ -1,0 +1,37 @@
+HP8903 audio analyser via Prologix GPIB
+===================
+
+The HP8903 is a remote controllable audio analyser. The device is old but thus available for sane prices.
+The scripts mentioned here currently allow you to obtain a frequency/level measurement and create a plot
+like the following.
+
+![Example image](doc/example_palmer_reverse.png)
+
+The scripts are not yet cleaned up and this is the first version that is more of a proof-of-concept.
+I will try to add other measurement types.
+
+
+Features
+========
+
+Do the measurement witha Prologix GPIB interface, configured to provide the connection with a 
+serial port.
+
+Depending on the condition of your device, it may be sensible to do a loop-back measurement and
+use this as a calibration reference while plotting. See option ```--calibration-file``` to
+use this feature.
+
+
+Installation
+=========
+
+You need Python 3, libserial, pyyaml, matplotlib, argparse, math and csv libraries.
+
+
+Configuration
+=============
+
+```measure.py``` is mainly configured through ```config.yml```and has many constants still in the source
+code, as this is the main proof-of-concept code.
+
+```graph.py``` has no internal configuration, customize it using command line arguments.
