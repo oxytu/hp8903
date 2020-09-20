@@ -8,8 +8,11 @@ config = yaml.load(open('config.yml'), Loader=yaml.FullLoader)
 parity = serial.PARITY_NONE
 rtscts = 1
 ENCODING = "iso8859-1"
+DEBUG = 0
 
 def gpib_send(gpib, string):
+	if (DEBUG == 1):
+		print(">>>" + string)
 	gpib.write((string + "\n").encode(ENCODING))
 
 def initialize_prologix(gpib, remote_address):
@@ -64,6 +67,11 @@ def init_argparse() -> argparse.ArgumentParser:
 		description="Creates a measurement via the HP8903 and outputs the results to STDOUT"
 	)
 	parser.add_argument(
+		"-v", "--verbose",
+		action='store',
+		type=bool
+	)
+	parser.add_argument(
 		"-m", "--measure",
 		action='store',
 		default="LVL_FREQ",
@@ -116,6 +124,9 @@ def init_argparse() -> argparse.ArgumentParser:
 def main() -> None:
 	parser = init_argparse()
 	args = parser.parse_args()
+
+	if (args.verbose):
+		DEBUG = 1
 
 	with serial.Serial(config['serialdevice'], config['baudrate'], timeout=int(config['timeout']), parity=parity, rtscts=rtscts) as gpib:
 		initialize_prologix(gpib, config['gpib_remote_addr'])
