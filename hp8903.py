@@ -51,11 +51,11 @@ def parse_exp_notation(string):
 
 def hp8903_freq(freq_in_hz):
 	# KZ for Kilohertz
-	return "FR" + str(freq_in_hz) + "HZ"
+	return "FR" + str(int(freq_in_hz)) + "HZ"
 
 def hp8903_ampl(ampl_in_v):
 	# MV for Millivolts
-	return "AP" + str(ampl_in_v) + "VL"
+	return "AP" + str(round(ampl_in_v, 3)) + "VL"
 
 def hp8903_meas(measurement):
 	return measurement.value
