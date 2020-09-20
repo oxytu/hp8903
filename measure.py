@@ -68,8 +68,8 @@ def init_argparse() -> argparse.ArgumentParser:
 	)
 	parser.add_argument(
 		"-v", "--verbose",
-		action='store',
-		type=bool
+		action='store_true',
+		default=False
 	)
 	parser.add_argument(
 		"-m", "--measure",
@@ -126,6 +126,7 @@ def main() -> None:
 	args = parser.parse_args()
 
 	if (args.verbose):
+		print("<<<DEBUG MODE ACTIVE>>>")
 		DEBUG = 1
 
 	with serial.Serial(config['serialdevice'], config['baudrate'], timeout=int(config['timeout']), parity=parity, rtscts=rtscts) as gpib:
