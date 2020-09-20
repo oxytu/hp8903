@@ -119,7 +119,7 @@ def main() -> None:
 	args = parser.parse_args()
 
 	with serial.Serial(config['serialdevice'], config['baudrate'], timeout=int(config['timeout']), parity=parity, rtscts=rtscts) as gpib:
-		initialize_prologix()
+		initialize_prologix(gpib, config['gpib_remote_addr'])
 
 		if (args.measure == "LVL_FREQ"):
 			measure_freq_level(gpib, args.start_frequency, args.stop_frequency, args.steps, args.start_amplitude, persist_meas_result)
