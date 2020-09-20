@@ -15,11 +15,11 @@ def gpib_send(gpib, string):
 def initialize_prologix(gpib, remote_address):
 	gpib_send(gpib, "++mode 1")
 	gpib_send(gpib, "++auto 1")
-	gpib_send(gpib, "++read_tmo_ms 3000")
+	#gpib_send(gpib, "++read_tmo_ms 3000")
 	gpib_send(gpib, "++addr " + str(remote_address))
 	gpib_send(gpib, "++ifc")
 	gpib_send(gpib, "++eoi 0")
-	gpib_send(gpib, "++eos 0")
+	#gpib_send(gpib, "++eos 0")
 	gpib_send(gpib, "++clr")
 
 def persist_meas_result(gpib):
