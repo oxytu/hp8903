@@ -36,10 +36,10 @@ class Trigger(Enum):
 
 
 def parse_exp_notation(string):
-	#return string.decode(ENCODING)
+	#return string
 	pattern = re.compile(r"""([+-][0-9]+)E([+-][0-9]+)""", re.VERBOSE)
 	
-	match = pattern.match(string.decode(ENCODING))
+	match = pattern.match(string)
 	if match is not None:
 		mantisse = float(match.group(1))
 		exponent = float(match.group(2))

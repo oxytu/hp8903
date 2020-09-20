@@ -24,10 +24,10 @@ def initialize_prologix(gpib, remote_address):
 
 def persist_meas_result(gpib):
 	gpib_send(gpib, "RL")
-	answerleft = parse_exp_notation(gpib.readline())
+	answerleft = parse_exp_notation(gpib.readline().decode(ENCODING))
 
 	gpib_send(gpib, "RR")
-	answerright = parse_exp_notation(gpib.readline())
+	answerright = parse_exp_notation(gpib.readline().decode(ENCODING))
 
 	print(str(answerleft) + ";" + str(answerright))
 
