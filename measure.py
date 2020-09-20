@@ -20,7 +20,7 @@ def parse_exp_notation(string):
 	else:
 		return None
 
-with serial.Serial('COM2', config['baudrate'], timeout=2, parity=parity, rtscts=rtscts) as gpib:
+with serial.Serial(config['serialdevice'], config['baudrate'], timeout=2, parity=parity, rtscts=rtscts) as gpib:
 
 	gpib.write(b'++mode 1\n')
 	gpib.write(b'++auto 1\n')
