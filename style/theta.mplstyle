@@ -1,0 +1,20 @@
+axes.titlesize : 14
+axes.labelsize : 12
+axes.facecolor : e6e6e6
+
+lines.linewidth : 3
+lines.markersize : 10
+
+xtick.labelsize : 12
+
+ytick.labelsize : 12
+ytick.minor.size: 2
+ytick.minor.width: 0.6
+ytick.minor.visible: True
+
+font.family: Myriad Pro
+font.weight: bold
+
+grid.alpha: 0.7
+grid.color: 8888ff
+grid.linestyle: --

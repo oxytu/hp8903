@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Graph",
+            "type": "python",
+            "request": "launch",
+            "program": "graph.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/",
+
+            "args": ["palmer_di_green_reverse.csv"]
+        }
+    ]
+}
