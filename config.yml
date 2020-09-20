@@ -1,2 +1,3 @@
 serialdevice: COM2
 baudrate: 115200
+timeout: 2

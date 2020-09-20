@@ -1,82 +1,131 @@
 import serial
 import yaml
 import re
+import argparse
+from hp8903 import *
 
 config = yaml.load(open('config.yml'), Loader=yaml.FullLoader)
 
 parity = serial.PARITY_NONE
 rtscts = 1
+ENCODING = "iso8859-1"
 
-def parse_exp_notation(string):
-	#return string.decode("iso8859-1")
-	pattern = re.compile(r"""([+-][0-9]+)E([+-][0-9]+)""", re.VERBOSE)
-	
-	match = pattern.match(string.decode("iso8859-1"))
-	if match is not None:
-		mantisse = float(match.group(1))
-		exponent = float(match.group(2))
+def gpib_send(gpib, string):
+	gpib.write((string + "\n").encode(ENCODING))
 
-		return (mantisse * (10 ** exponent))
-	else:
-		return None
+def initialize_prologix(gpib, remote_address):
+	gpib_send(gpib, "++mode 1")
+	gpib_send(gpib, "++auto 1")
+	gpib_send(gpib, "++read_tmo_ms 3000")
+	gpib_send(gpib, "++addr " + remote_address)
+	gpib_send(gpib, "++ifc")
+	gpib_send(gpib, "++eoi 0")
+	gpib_send(gpib, "++eos 0")
+	gpib_send(gpib, "++clr")
 
-with serial.Serial(config['serialdevice'], config['baudrate'], timeout=2, parity=parity, rtscts=rtscts) as gpib:
+def persist_meas_result(gpib):
+	gpib_send(gpib, "RL")
+	answerleft = parse_exp_notation(gpib.readline())
 
-	gpib.write(b'++mode 1\n')
-	gpib.write(b'++auto 1\n')
-	gpib.write(b'++addr\n')
-	# print(gpib.read(10).decode("iso8859-1")) # device id
-	gpib.write(b'++ifc\n')
-	gpib.write(b'++eoi 0\n')
-	gpib.write(b'++clr\n')
+	gpib_send(gpib, "RR")
+	answerright = parse_exp_notation(gpib.readline())
 
-	#gpib.write(b'++auto 0\n*idn?\n++read eoi\n')
-	#print(gpib.read(10).decode("iso8859-1"))
-	#gpib.write(b'++auto 1\n')
+	print(str(answerleft) + ";" + str(answerright))
 
-	#command = "AU" # Automatic Operation
-	#command = "T1"
-	command = ""
-
-	command += "FR30KZ"
-
-	#command += 'FA30KZ' # Freq Start
-	#command += 'FB50KZ' # Freq Stop
-	#command += 'FN10KZ'# Freq Increment
-
-	command += 'AP1VL' # AMplitude
-	#command += 'AN1MV' # Amplitude Increment (mV)
-
-	#command += 'W1' # Sweep on (0-Off)
-
-	command += 'M1' # Measure AC Level (M2 SINAD - M3 DIST - S1 DC - S2 SNR - S3 DIST LVL)
-	command += 'H0' # Filters Off (H1 400Hz HP, H2 Psoph BP)
-	command += 'L0' # Filters Off (L1 30kHz LP, L2 80kHz LP)
-
-	#command += 'T1' # Trigger Immediate (T1 - Hold, T0 - Free Frun, T3 - Trigger with Setting)
-
-	gpib.write((command + '\n').encode("iso8859-1"))
-	gpib.write(b'++read eoi\n')
+def generic_sweep_measurement(gpib, init_command, start, end, steps_per_octave, conversion_function, persistor):
+	gpib_send(gpib, init_command)
+	gpib_send(gpib, "++read eoi")
 	gpib.readline()
 
-	start_freq = 20
-	max_freq = 40000
-	steps_per_octave = 12
 	increase_factor = 2**(1/steps_per_octave)
 
-	current_freq = start_freq
+	if (end < start): # Swap parameters if provided in the wrong direction
+		(start, end) = (end, start)
 
-	while current_freq < max_freq:
-		gpib.write(("FR" + str(current_freq) + "HZ\n").encode("iso8859-1"))
-		#gpib.write(b'++trg\n') # Clear Key - Trigger Measurement
-		#gpib.write(b'++spoll\n')
+	current = start
+
+	while current < end:
+		gpib_send(gpib, conversion_function(current))
 		gpib.readline()
 
-		gpib.write(b'RL\n')
-		answerleft = parse_exp_notation(gpib.readline())
+		persistor(gpib)
+		current *= increase_factor
 
-		gpib.write(b'RR\n')
-		answerright = parse_exp_notation(gpib.readline())
+def measure_freq_level(gpib, start_freq, max_freq, steps_per_octave, amplitude, persistor):
+	init_command = hp8903_freq(start_freq) + hp8903_ampl(amplitude) + hp8903_meas(Measurement.AC_VOLT) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_HOLD)
+	generic_sweep_measurement(gpib, init_command, start_freq, max_freq, steps_per_octave, hp8903_freq, persistor)
 
-		print(str(answerleft) + ";" + str(answerright))
-		current_freq *= increase_factor
+def measure_thd_level(gpib, start_ampl, max_ampl, steps_per_octave, frequency, persistor):
+	init_command = hp8903_freq(frequency) + hp8903_ampl(start_ampl) + hp8903_meas(Measurement.DISTORTION) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_HOLD)
+	generic_sweep_measurement(gpib, init_command, start_ampl, max_ampl, steps_per_octave, hp8903_ampl, persistor)
+
+def init_argparse() -> argparse.ArgumentParser:
+	parser = argparse.ArgumentParser(
+		usage="%(prog)s [options]",
+		description="Creates a measurement via the HP8903 and outputs the results to STDOUT"
+	)
+	parser.add_argument(
+		"-m", "--measure",
+		action='store',
+		default="LVL_FREQ",
+		choices=["LVL_FREQ", "THD_LVL", "SNR_LVL"],
+		help="What measurement to perform"
+	)
+	parser.add_argument(
+		"-f1", "--start-frequency",
+		action='store',
+		type=int,
+		default=10,
+		metavar='FREQ_HZ',
+		help="Start Frequency (if applicable for measurement type)"
+	)
+	parser.add_argument(
+		"-f2", "--stop-frequency",
+		action='store',
+		type=int,
+		default=40000,
+		metavar='FREQ_HZ',
+		help="Stop Frequency (if applicable for measurement type)"
+	)
+	parser.add_argument(
+		"-st", "--steps",
+		action='store',
+		type=int,
+		default=12,
+		metavar='STP/OCT',
+		help="How many measurement steps per octave"
+	)
+	parser.add_argument(
+		"-a1", "--start-amplitude",
+		action='store',
+		type=int,
+		default=0.001,
+		metavar='VOLT',
+		help="Start Amplitude (if applicable for measurement type)"
+	)
+	parser.add_argument(
+		"-a2", "--stop-amplitude",
+		action='store',
+		type=int,
+		default=6,
+		metavar='VOLT',
+		help="Stop Amplitude (if applicable for measurement type)"
+	)
+
+	return parser
+
+def main() -> None:
+	parser = init_argparse()
+	args = parser.parse_args()
+
+	with serial.Serial(config['serialdevice'], config['baudrate'], timeout=int(config['timeout']), parity=parity, rtscts=rtscts) as gpib:
+		initialize_prologix()
+
+		if (args.measure == "LVL_FREQ"):
+			measure_freq_level(gpib, args.start_frequency, args.stop_frequency, args.steps, args.start_amplitude, persist_meas_result)
+		if (args.measure == "THD"):
+			measure_thd_level(gpib, args.start_amplitude, args.stop_amplitude, args.steps, args.start_frequency, persist_meas_result)
+		else:
+			print("Not yet supported: " + args.measure)
+
+main()
