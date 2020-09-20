@@ -25,7 +25,7 @@ with serial.Serial(config['serialdevice'], config['baudrate'], timeout=2, parity
 	gpib.write(b'++mode 1\n')
 	gpib.write(b'++auto 1\n')
 	gpib.write(b'++addr\n')
-	print(gpib.read(10).decode("iso8859-1"))
+	# print(gpib.read(10).decode("iso8859-1")) # device id
 	gpib.write(b'++ifc\n')
 	gpib.write(b'++eoi 0\n')
 	gpib.write(b'++clr\n')
@@ -55,7 +55,6 @@ with serial.Serial(config['serialdevice'], config['baudrate'], timeout=2, parity
 
 	#command += 'T1' # Trigger Immediate (T1 - Hold, T0 - Free Frun, T3 - Trigger with Setting)
 
-	print(command)
 	gpib.write((command + '\n').encode("iso8859-1"))
 	gpib.write(b'++read eoi\n')
 	gpib.readline()
