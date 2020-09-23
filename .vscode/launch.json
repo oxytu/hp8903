@@ -2,6 +2,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Graph LVL/FRQ",
+            "type": "python",
+            "request": "launch",
+            "program": "graph.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/",
+
+            "args": ["-mLVL_FRQ", "measurements/frq_lvl_loopnew.csv"]
+        },        {
             "name": "Python: Graph THD/FRQ",
             "type": "python",
             "request": "launch",
