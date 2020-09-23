@@ -2,14 +2,24 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Graph",
+            "name": "Python: Graph THD/FRQ",
             "type": "python",
             "request": "launch",
             "program": "graph.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/",
 
-            "args": ["palmer_di_green_reverse.csv"]
+            "args": ["-mTHD_FRQ", "measurements/thd_frq_loop.csv", "measurements/thd_frq_palmer_green_forward.csv"]
+        },
+        {
+            "name": "Python: Graph THD/LVL",
+            "type": "python",
+            "request": "launch",
+            "program": "graph.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/",
+
+            "args": ["-mTHD_LVL", "measurements/thd_lvl_loop.csv", "measurements/thd_lvl_palmer_green_forward.csv"]
         }
     ]
 }

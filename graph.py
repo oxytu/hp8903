@@ -4,20 +4,45 @@ import csv
 import math
 import argparse
 
-def load_csv(filename, reference_level):
+def load_csv(measurement, filename, reference_level):
     x = []
     y = []
 
     with open(filename, 'r') as csvfile:
-        plots = csv.reader(csvfile, delimiter=";")
+        plots = csv.reader(filter(lambda row: row[0]!='#', csvfile), delimiter=";")
         for row in plots:
-            freq = float(row[0])
-            voltage = float(row[1])
+            if measurement == "LVL_FRQ":
+                if (row[1] == 'None' or row[2] == 'None'):
+                    continue
+                freq = float(row[1])
+                voltage = float(row[2])
 
-            level = 20 * math.log(voltage/reference_level)
+                level = 20 * math.log10(voltage/reference_level)
 
-            x.append(freq)
-            y.append(level)
+                x.append(freq)
+                y.append(level)
+            if measurement == "THD_LVL":
+                if (row[0] == 'None' or row[2] == 'None'):
+                    continue
+                out_volt = float(row[0])
+                in_thd = float(row[2])
+
+                out_level = 20 * math.log10(out_volt/reference_level)
+                in_level = 20 * math.log10(in_thd/100)
+
+                x.append(out_volt)
+                y.append(in_level)
+            if measurement == "THD_FRQ":
+                if (row[0] == 'None' or row[2] == 'None'):
+                    continue
+                freq = float(row[0])
+                in_thd = float(row[2])
+
+                in_level = 20 * math.log10(in_thd/100)
+
+                x.append(freq)
+                y.append(in_level)
+
     return (x,y)
 
 def load_calibration(filename):
@@ -48,30 +73,63 @@ def apply_calibration(calibration, measure):
 
     return (x, y)
 
-def create_graphs(files, calibration_file, graph_style, reference_level) -> None:
+def define_db_scale(plt, axis, values) -> None:
+    min_db = (math.floor(min(values) / 6) * 6) - 6
+    max_db = (math.ceil(max(values) / 6) * 6) + 6
+
+    if axis == "y":
+        plt.yticks(np.arange(min_db, max_db, 6.0))
+        plt.ylim((min_db, max_db))
+    else:
+        plt.xticks(np.arange(min_db, max_db, 6.0))
+        plt.xlim((min_db, max_db))
+
+def configure_plot_lvl_frq(plt, calibration_file, x, y):
+    plt.xscale("log")
+    plt.xlabel('Frequency [Hz]')
+    
+    if calibration_file is not None:
+        plt.ylabel('Level [dB]')
+    else:
+        plt.ylabel('Level [dBu]')
+    define_db_scale(plt, "y", y)
+
+def configure_plot_thd_lvl(plt, x, y):
+    plt.xlabel('Generator Level [dBu]')    
+    plt.ylabel('THD Level [dB]')
+
+    define_db_scale(plt, "x", x)
+    define_db_scale(plt, "y", y)
+
+def configure_plot_thd_frq(plt, x, y):
+    plt.xscale("log")
+    plt.xlabel('Frequency [Hz]')
+    
+
+    plt.ylabel('THD Level [dB]')
+    define_db_scale(plt, "y", y)
+
+def create_graphs(measure, files, calibration_file, graph_style, reference_level) -> None:
     calibration = load_calibration(calibration_file)
 
+    if calibration != None and measure != "LVL_FRQ":
+        raise "Calibration currently only possible for LVL_FRQ measurements!"
+
     for file in files:
-        measurement = load_csv(file, reference_level)
+        measurement = load_csv(measure, file, reference_level)
         (x, y) = apply_calibration(calibration, measurement)
 
         plt.style.use(graph_style)
 
-        plt.xscale("log")
-        
-        min_db = (math.floor(min(y) / 6) * 6) - 6
-        max_db = (math.ceil(max(y) / 6) * 6) + 6
-        plt.yticks(np.arange(min_db, max_db, 6.0))
-
-        plt.ylim((min_db, max_db))
+        if measure == "LVL_FRQ":
+            configure_plot_lvl_frq(plt, calibration_file, x, y)
+        elif measure == "THD_LVL":
+            configure_plot_thd_lvl(plt, x, y)
+        elif measure == "THD_FRQ":
+            configure_plot_thd_frq(plt, x, y)
 
         plt.grid()
-        plt.plot(x,y,label="Frequency Response")
-        plt.xlabel('Frequency [Hz]')
-        if calibration_file is not None:
-            plt.ylabel('Level [dB]')
-        else:
-            plt.ylabel('Level [dBu]')
+        plt.plot(x, y, label="Frequency Response")
         plt.title(f"{file}")
         plt.legend()
         plt.show()
@@ -81,6 +139,13 @@ def init_argparse() -> argparse.ArgumentParser:
         usage="%(prog)s [options] [files]...",
         description="Plots measurements created with the HP8903 - currently only as Frequency Graphs"
     )
+    parser.add_argument(
+		"-m", "--measure",
+		action='store',
+		default="LVL_FRQ",
+		choices=["LVL_FRQ", "THD_LVL", "THD_FRQ", "SNR_LVL"],
+		help="What type measurement to graph"
+	)
     parser.add_argument(
         "-r", "--reference-level",
         action='store',
@@ -102,6 +167,6 @@ def main() -> None:
     parser = init_argparse()
     args = parser.parse_args()
 
-    create_graphs(args.files, args.calibration_file, 'style/theta.mplstyle', args.reference_level)
+    create_graphs(args.measure, args.files, args.calibration_file, 'style/theta.mplstyle', args.reference_level)
 
 main()
