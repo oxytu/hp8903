@@ -109,7 +109,7 @@ def configure_plot_thd_frq(plt, x, y):
     plt.ylabel('THD Level [dB]')
     define_db_scale(plt, "y", y)
 
-def create_graphs(measure, files, calibration_file, graph_style, reference_level) -> None:
+def create_graphs(measure, files, output_format, calibration_file, graph_style, reference_level) -> None:
     calibration = load_calibration(calibration_file)
 
     if calibration != None and measure != "LVL_FRQ":
@@ -132,7 +132,11 @@ def create_graphs(measure, files, calibration_file, graph_style, reference_level
         plt.plot(x, y, label="Frequency Response")
         plt.title(f"{file}")
         plt.legend()
-        plt.show()
+
+        if (output_format is None):
+            plt.show()
+        else:
+            plt.savefig(file + "." + output_format)
 
 def init_argparse() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -145,6 +149,12 @@ def init_argparse() -> argparse.ArgumentParser:
 		default="LVL_FRQ",
 		choices=["LVL_FRQ", "THD_LVL", "THD_FRQ", "SNR_LVL"],
 		help="What type measurement to graph"
+	)
+    parser.add_argument(
+		"-o", "--output-format",
+		action='store',
+		choices=["png", "svg", "pdf"],
+		help="Output to file of specified format"
 	)
     parser.add_argument(
         "-r", "--reference-level",
@@ -167,6 +177,6 @@ def main() -> None:
     parser = init_argparse()
     args = parser.parse_args()
 
-    create_graphs(args.measure, args.files, args.calibration_file, 'style/theta.mplstyle', args.reference_level)
+    create_graphs(args.measure, args.files, args.output_format, args.calibration_file, 'style/theta.mplstyle', args.reference_level)
 
 main()
