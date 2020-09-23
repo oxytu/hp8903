@@ -8,7 +8,7 @@ config = yaml.load(open('config.yml'), Loader=yaml.FullLoader)
 parity = serial.PARITY_NONE
 rtscts = 1
 ENCODING = "iso8859-1"
-DEBUG = True
+DEBUG = False
 
 def gpib_send(gpib, string):
 	if DEBUG:
@@ -21,18 +21,18 @@ def initialize_prologix(gpib, remote_address):
 	gpib_send(gpib, "++read_tmo_ms 5000")
 	gpib_send(gpib, "++addr " + str(remote_address))
 	gpib_send(gpib, "++ifc")
-	gpib_send(gpib, "++eoi 0")
+	gpib_send(gpib, "++eoi 1")
 	gpib_send(gpib, "++eos 1")
 	gpib_send(gpib, "++clr")
 
-def persist_meas_result(gpib):
+def persist_meas_result(current_output, gpib):
 	gpib_send(gpib, "RL")
 	answerleft = parse_exp_notation(gpib.readline().decode(ENCODING))
 
 	gpib_send(gpib, "RR")
 	answerright = parse_exp_notation(gpib.readline().decode(ENCODING))
 
-	print(str(answerleft) + ";" + str(answerright))
+	print(str(current_output) + ";" + str(answerleft) + ";" + str(answerright))
 
 def generic_sweep_measurement(gpib, init_command, start, end, steps_per_octave, conversion_function, persistor):
 	gpib_send(gpib, init_command)
@@ -50,16 +50,23 @@ def generic_sweep_measurement(gpib, init_command, start, end, steps_per_octave, 
 		gpib_send(gpib, conversion_function(current))
 		gpib.readline()
 
-		persistor(gpib)
+		persistor(current, gpib)
 		current *= increase_factor
 
 def measure_freq_level(gpib, start_freq, max_freq, steps_per_octave, amplitude, persistor):
-	init_command = hp8903_freq(start_freq) + hp8903_ampl(amplitude) + hp8903_meas(Measurement.AC_VOLT) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_HOLD)
+	print("# FRQ_LVL Measurement, start_freq=" + str(start_freq) + ", max_freq=" + str(max_freq) + ", amplitude=" + str(amplitude) + ", steps_per_oct=" + str(steps_per_octave))
+	init_command = hp8903_freq(start_freq) + hp8903_ampl(amplitude) + hp8903_meas(Measurement.AC_VOLT) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_FREERUN)
 	generic_sweep_measurement(gpib, init_command, start_freq, max_freq, steps_per_octave, hp8903_freq, persistor)
 
 def measure_thd_level(gpib, start_ampl, max_ampl, steps_per_octave, frequency, persistor):
-	init_command = hp8903_freq(frequency) + hp8903_ampl(start_ampl) + hp8903_meas(Measurement.DISTORTION) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_HOLD)
+	print("# THD_LVL Measurement, start_ampl=" + str(start_ampl) + ", max_ampl=" + str(max_ampl) + ", frequency=" + str(frequency) + ", steps_per_oct=" + str(steps_per_octave))
+	init_command = hp8903_freq(frequency) + hp8903_ampl(start_ampl) + hp8903_meas(Measurement.DISTORTION) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_FREERUN)
 	generic_sweep_measurement(gpib, init_command, start_ampl, max_ampl, steps_per_octave, hp8903_ampl, persistor)
+
+def measure_thd_freq(gpib, start_freq, max_freq, steps_per_octave, amplitude, persistor):
+	print("# THD_FRQ Measurement, start_freq=" + str(start_freq) + ", max_freq=" + str(max_freq) + ", amplitude=" + str(amplitude) + ", steps_per_oct=" + str(steps_per_octave))
+	init_command = hp8903_freq(start_freq) + hp8903_ampl(amplitude) + hp8903_meas(Measurement.DISTORTION) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_FREERUN)
+	generic_sweep_measurement(gpib, init_command, start_freq, max_freq, steps_per_octave, hp8903_freq, persistor)
 
 def init_argparse() -> argparse.ArgumentParser:
 	parser = argparse.ArgumentParser(
@@ -74,15 +81,15 @@ def init_argparse() -> argparse.ArgumentParser:
 	parser.add_argument(
 		"-m", "--measure",
 		action='store',
-		default="LVL_FREQ",
-		choices=["LVL_FREQ", "THD_LVL", "SNR_LVL"],
+		default="LVL_FRQ",
+		choices=["LVL_FRQ", "THD_LVL", "THD_FRQ", "SNR_LVL"],
 		help="What measurement to perform"
 	)
 	parser.add_argument(
 		"-f1", "--start-frequency",
 		action='store',
 		type=int,
-		default=10,
+		default=20,
 		metavar='FREQ_HZ',
 		help="Start Frequency (if applicable for measurement type)"
 	)
@@ -105,8 +112,8 @@ def init_argparse() -> argparse.ArgumentParser:
 	parser.add_argument(
 		"-a1", "--start-amplitude",
 		action='store',
-		type=int,
-		default=0.001,
+		type=float,
+		default=0.010,
 		metavar='VOLT',
 		help="Start Amplitude (if applicable for measurement type)"
 	)
@@ -122,6 +129,7 @@ def init_argparse() -> argparse.ArgumentParser:
 	return parser
 
 def main() -> None:
+	global DEBUG
 	parser = init_argparse()
 	args = parser.parse_args()
 
@@ -132,10 +140,12 @@ def main() -> None:
 	with serial.Serial(config['serialdevice'], config['baudrate'], timeout=int(config['timeout']), parity=parity, rtscts=rtscts) as gpib:
 		initialize_prologix(gpib, config['gpib_remote_addr'])
 
-		if (args.measure == "LVL_FREQ"):
+		if (args.measure == "LVL_FRQ"):
 			measure_freq_level(gpib, args.start_frequency, args.stop_frequency, args.steps, args.start_amplitude, persist_meas_result)
-		if (args.measure == "THD"):
+		if (args.measure == "THD_LVL"):
 			measure_thd_level(gpib, args.start_amplitude, args.stop_amplitude, args.steps, args.start_frequency, persist_meas_result)
+		if (args.measure == "THD_FRQ"):
+			measure_thd_freq(gpib, args.start_frequency, args.stop_frequency, args.steps, args.start_amplitude, persist_meas_result)
 		else:
 			print("Not yet supported: " + args.measure)
 

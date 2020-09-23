@@ -55,7 +55,7 @@ def hp8903_freq(freq_in_hz):
 
 def hp8903_ampl(ampl_in_v):
 	# MV for Millivolts
-	return "AP" + str(round(ampl_in_v, 3)) + "VL"
+	return "AP" + str(int(ampl_in_v * 1000)) + "E-3VL"
 
 def hp8903_meas(measurement):
 	return measurement.value
