@@ -33,7 +33,8 @@ You need Python 3, pyserial, pyyaml, matplotlib, argparse, math and csv librarie
 Configuration
 =============
 
-```measure.py``` is mainly configured through ```config.yml```and has many constants still in the source
-code, as this is the main proof-of-concept code.
+```measure.py``` is statically configured through ```config.yml``` (Serial port, BAUD rate). Measurement configuration is done via command line arguments.
 
 ```graph.py``` has no internal configuration, customize it using command line arguments.
+
+The parameter ```--help``` will give you details about the command line arguments.
