@@ -25,7 +25,9 @@ use this feature.
 Installation
 =========
 
-You need Python 3, libserial, pyyaml, matplotlib, argparse, math and csv libraries.
+You need Python 3, pyserial, pyyaml, matplotlib, argparse, math and csv libraries.
+
+```pip3 install pyserial pyyaml matplotlib argparse math csv```
 
 
 Configuration
