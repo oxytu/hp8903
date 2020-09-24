@@ -142,9 +142,9 @@ def main() -> None:
 
 		if (args.measure == "LVL_FRQ"):
 			measure_freq_level(gpib, args.start_frequency, args.stop_frequency, args.steps, args.start_amplitude, persist_meas_result)
-		if (args.measure == "THD_LVL"):
+		elif (args.measure == "THD_LVL"):
 			measure_thd_level(gpib, args.start_amplitude, args.stop_amplitude, args.steps, args.start_frequency, persist_meas_result)
-		if (args.measure == "THD_FRQ"):
+		elif (args.measure == "THD_FRQ"):
 			measure_thd_freq(gpib, args.start_frequency, args.stop_frequency, args.steps, args.start_amplitude, persist_meas_result)
 		else:
 			print("Not yet supported: " + args.measure)
