@@ -129,7 +129,8 @@ def create_graphs(measure, files, output_format, calibration_file, graph_style, 
             configure_plot_thd_frq(plt, x, y)
 
         plt.grid()
-        plt.plot(x, y, label="Frequency Response")
+        plt.figure(file)
+        plt.plot(x, y, label="Frequency Response " + file)
         plt.title(f"{file}")
         plt.legend()
 
