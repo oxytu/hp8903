@@ -9,7 +9,13 @@
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/",
 
-            "args": ["-mLVL_FRQ", "measurements/frq_lvl_loopnew.csv"]
+            "args": [
+                "-mLVL_FRQ", 
+                "-opng", 
+                "measurements/frq_lvl_lakef355.csv",
+                "measurements/frq_lvl_lakef355_2.csv",
+                "measurements/frq_lvl_art_headphoneamp5.csv"
+            ]
         },        {
             "name": "Python: Graph THD/FRQ",
             "type": "python",
@@ -18,7 +24,13 @@
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/",
 
-            "args": ["-mTHD_FRQ", "measurements/thd_frq_loop.csv", "measurements/thd_frq_palmer_green_forward.csv"]
+            "args": [
+                "-mTHD_FRQ", 
+                "-opng", 
+                "measurements/thd_frq_loop.csv", 
+                "measurements/thd_frq_palmer_green_forward.csv",
+                "measurements/thd_frq_lakef355.csv"
+            ]
         },
         {
             "name": "Python: Graph THD/LVL",
@@ -28,7 +40,22 @@
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/",
 
-            "args": ["-mTHD_LVL", "measurements/thd_lvl_loop.csv", "measurements/thd_lvl_palmer_green_forward.csv"]
+            "args": [
+                "-mTHD_LVL", 
+                "-opng", 
+                "measurements/thd_lvl_loop.csv", 
+                "measurements/thd_lvl_palmer_green_forward.csv",
+                "measurements/thd_lvl_lakef355.csv"]
+        },
+        {
+            "name": "Python: HP8903 Webserver",
+            "type": "python",
+            "request": "launch",
+            "program": "webserver.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/",
+
+            "args": []
         }
     ]
 }

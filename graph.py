@@ -3,45 +3,46 @@ import numpy as np
 import csv
 import math
 import argparse
+import io
 
-def load_csv(measurement, filename, reference_level):
+def load_csv(measurement, filecontent, reference_level):
     x = []
     y = []
 
-    with open(filename, 'r') as csvfile:
-        plots = csv.reader(filter(lambda row: row[0]!='#', csvfile), delimiter=";")
-        for row in plots:
-            if measurement == "LVL_FRQ":
-                if (row[1] == 'None' or row[2] == 'None'):
-                    continue
-                freq = float(row[1])
-                voltage = float(row[2])
+    csvcontent = io.StringIO(filecontent)
+    plots = csv.reader(filter(lambda row: row[0]!='#', csvcontent), delimiter=";")
+    for row in plots:
+        if measurement == "LVL_FRQ":
+            if (row[1] == 'None' or row[2] == 'None'):
+                continue
+            freq = float(row[1])
+            voltage = float(row[2])
 
-                level = 20 * math.log10(voltage/reference_level)
+            level = 20 * math.log10(voltage/reference_level)
 
-                x.append(freq)
-                y.append(level)
-            if measurement == "THD_LVL":
-                if (row[0] == 'None' or row[2] == 'None'):
-                    continue
-                out_volt = float(row[0])
-                in_thd = float(row[2])
+            x.append(freq)
+            y.append(level)
+        if measurement == "THD_LVL":
+            if (row[0] == 'None' or row[2] == 'None'):
+                continue
+            out_volt = float(row[0])
+            in_thd = float(row[2])
 
-                out_level = 20 * math.log10(out_volt/reference_level)
-                in_level = 20 * math.log10(in_thd/100)
+            out_level = 20 * math.log10(out_volt/reference_level)
+            in_level = 20 * math.log10(in_thd/100)
 
-                x.append(out_volt)
-                y.append(in_level)
-            if measurement == "THD_FRQ":
-                if (row[0] == 'None' or row[2] == 'None'):
-                    continue
-                freq = float(row[0])
-                in_thd = float(row[2])
+            x.append(out_volt)
+            y.append(in_level)
+        if measurement == "THD_FRQ":
+            if (row[0] == 'None' or row[2] == 'None'):
+                continue
+            freq = float(row[0])
+            in_thd = float(row[2])
 
-                in_level = 20 * math.log10(in_thd/100)
+            in_level = 20 * math.log10(in_thd/100)
 
-                x.append(freq)
-                y.append(in_level)
+            x.append(freq)
+            y.append(in_level)
 
     return (x,y)
 
@@ -84,11 +85,11 @@ def define_db_scale(plt, axis, values) -> None:
         plt.xticks(np.arange(min_db, max_db, 6.0))
         plt.xlim((min_db, max_db))
 
-def configure_plot_lvl_frq(plt, calibration_file, x, y):
+def configure_plot_lvl_frq(plt, calibration, x, y):
     plt.xscale("log")
     plt.xlabel('Frequency [Hz]')
     
-    if calibration_file is not None:
+    if calibration is not None:
         plt.ylabel('Level [dB]')
     else:
         plt.ylabel('Level [dBu]')
@@ -109,35 +110,49 @@ def configure_plot_thd_frq(plt, x, y):
     plt.ylabel('THD Level [dB]')
     define_db_scale(plt, "y", y)
 
+def create_graph(measure, file_contents, output_format, output_buffer, calibration, graph_style, reference_level) -> None:
+    measurement = load_csv(measure, file_contents, reference_level)
+    (x, y) = apply_calibration(calibration, measurement)
+
+    plt.figure()
+    plt.style.use(graph_style)
+
+    if measure == "LVL_FRQ":
+        configure_plot_lvl_frq(plt, calibration, x, y)
+    elif measure == "THD_LVL":
+        configure_plot_thd_lvl(plt, x, y)
+    elif measure == "THD_FRQ":
+        configure_plot_thd_frq(plt, x, y)
+
+    plt.grid()
+    plt.plot(x, y, label="Frequency Response ")
+    plt.title(f"Measurement")
+    plt.legend()
+
+    if (output_format is None):
+        plt.show()
+    else:
+        plt.savefig(output_buffer, format=output_format)
+        #plt.savefig(file + "." + output_format)
+
+    plt.close()
+
 def create_graphs(measure, files, output_format, calibration_file, graph_style, reference_level) -> None:
     calibration = load_calibration(calibration_file)
 
     if calibration != None and measure != "LVL_FRQ":
         raise "Calibration currently only possible for LVL_FRQ measurements!"
 
-    for file in files:
-        measurement = load_csv(measure, file, reference_level)
-        (x, y) = apply_calibration(calibration, measurement)
+    for filename in files:
+        with open(filename, 'r') as csvfile:
+            file_content = csvfile.read()
+            output_buffer = io.BytesIO()
+            create_graph(measure, file_content, output_format, output_buffer, calibration, graph_style, reference_level)
+            output_buffer.seek(0)
+            with open(f"{filename}.{output_format}", "wb") as f:
+                f.write(output_buffer.getbuffer())
+            output_buffer.close()
 
-        plt.style.use(graph_style)
-
-        if measure == "LVL_FRQ":
-            configure_plot_lvl_frq(plt, calibration_file, x, y)
-        elif measure == "THD_LVL":
-            configure_plot_thd_lvl(plt, x, y)
-        elif measure == "THD_FRQ":
-            configure_plot_thd_frq(plt, x, y)
-
-        plt.grid()
-        plt.figure(file)
-        plt.plot(x, y, label="Frequency Response " + file)
-        plt.title(f"{file}")
-        plt.legend()
-
-        if (output_format is None):
-            plt.show()
-        else:
-            plt.savefig(file + "." + output_format)
 
 def init_argparse() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -180,4 +195,5 @@ def main() -> None:
 
     create_graphs(args.measure, args.files, args.output_format, args.calibration_file, 'style/theta.mplstyle', args.reference_level)
 
-main()
+if __name__ == "__main__":
+    main()
