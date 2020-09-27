@@ -35,7 +35,7 @@ class Hp8903Server(object):
     @cherrypy.expose
     def graph(self, type=None, csv=None):
         output_buffer = io.BytesIO()
-        graph.create_graphs(type, csv, "png", output_buffer, None, 'style/theta.mplstyle', None)
+        graph.create_graph(type, csv, "png", output_buffer, None, 'style/theta.mplstyle', None)
         output_buffer.seek(0)
         cherrypy.response.headers['Content-Type'] = "image/png"
         return file_generator(output_buffer)
