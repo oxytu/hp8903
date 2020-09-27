@@ -5,9 +5,14 @@ import math
 import argparse
 import io
 
+REFERENCE_LEVEL_DEFAULT=0.775
+
 def load_csv(measurement, filecontent, reference_level):
     x = []
     y = []
+
+    if (reference_level is None):
+        reference_level = REFERENCE_LEVEL_DEFAULT
 
     csvcontent = io.StringIO(filecontent)
     plots = csv.reader(filter(lambda row: row[0]!='#', csvcontent), delimiter=";")
@@ -176,7 +181,6 @@ def init_argparse() -> argparse.ArgumentParser:
         "-r", "--reference-level",
         action='store',
         type=float,
-        default=0.775,
         metavar='REFERENCE_VOLTAGE',
         help="What reference level shall be used for dB calculations? (Default=0.775V = dBu, not used when you provide a calibration file)"
     )
