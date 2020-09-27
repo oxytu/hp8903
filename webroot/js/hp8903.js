@@ -4,13 +4,13 @@ function uniqId() {
   }
 
 function measure_success(data, textStatus, jqXHR) {
+    $("#output_measurement > .output_date").text("Date: " + new Date());
+    $("#output_measurement > .output_image").attr("src", "data:image/png;base64," + data);
+    
     if ($("#keep-measurements").prop('checked')) {
         $("#output_measurement").clone().prop('id', 'output_measurement_' + uniqId() ).prependTo("#output_old");
     }
-    $("#output_measurement > .output_date").text("Date: " + new Date());
-    $("#output_measurement > .output_image").attr("src", "data:image/png;base64," + data);
 
-    localStorage.setItem('current_measurement', $('#output_measurement').html());
     localStorage.setItem('measurements', $('#output_old').html());
 }
 
@@ -59,14 +59,9 @@ function submit_measure(form, event) {
 }
 
 function restoreLocalStorageState() {
-
     var measurements = localStorage.getItem("measurements");
-    var current_measurement = localStorage.getItem("current_measurement");
     var keep_measurements = localStorage.getItem("ckeep-measurements");
-    
-    if (current_measurement != null) {
-        $('#output_measurement').html(current_measurement);
-    }
+
     if (measurements != null) {
         $('#output_old').html(measurements);
     }
@@ -86,7 +81,6 @@ function init_hp8903() {
 
     $("#output-clear-all").click(function() {
         localStorage.setItem("measurements", null);
-        localStorage.setItem("current_measurement", null);
 
         $('#output_old').html("");
     });
