@@ -57,13 +57,13 @@ def generic_sweep_measurement(gpib, init_command, start, end, steps_per_octave, 
 		current *= increase_factor
 
 def measure_freq_level(gpib, start_freq, max_freq, steps_per_octave, amplitude, persistor, stream):
-	print("# FRQ_LVL Measurement, start_freq=" + str(start_freq) + ", max_freq=" + str(max_freq) + ", amplitude=" + str(amplitude) + ", steps_per_oct=" + str(steps_per_octave))
-	init_command = hp8903_freq(start_freq) + hp8903_ampl(amplitude) + hp8903_meas(Measurement.AC_VOLT) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_FREERUN, file=stream)
+	print("# FRQ_LVL Measurement, start_freq=" + str(start_freq) + ", max_freq=" + str(max_freq) + ", amplitude=" + str(amplitude) + ", steps_per_oct=" + str(steps_per_octave), file=stream)
+	init_command = hp8903_freq(start_freq) + hp8903_ampl(amplitude) + hp8903_meas(Measurement.AC_VOLT) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_FREERUN)
 	generic_sweep_measurement(gpib, init_command, start_freq, max_freq, steps_per_octave, hp8903_freq, persistor)
 
 def measure_thd_level(gpib, start_ampl, max_ampl, steps_per_octave, frequency, persistor, stream):
-	print("# THD_LVL Measurement, start_ampl=" + str(start_ampl) + ", max_ampl=" + str(max_ampl) + ", frequency=" + str(frequency) + ", steps_per_oct=" + str(steps_per_octave))
-	init_command = hp8903_freq(frequency) + hp8903_ampl(start_ampl) + hp8903_meas(Measurement.DISTORTION) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_FREERUN, file=stream)
+	print("# THD_LVL Measurement, start_ampl=" + str(start_ampl) + ", max_ampl=" + str(max_ampl) + ", frequency=" + str(frequency) + ", steps_per_oct=" + str(steps_per_octave), file=stream)
+	init_command = hp8903_freq(frequency) + hp8903_ampl(start_ampl) + hp8903_meas(Measurement.DISTORTION) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_FREERUN)
 	generic_sweep_measurement(gpib, init_command, start_ampl, max_ampl, steps_per_octave, hp8903_ampl, persistor)
 
 def measure_thd_freq(gpib, start_freq, max_freq, steps_per_octave, amplitude, persistor, stream):
