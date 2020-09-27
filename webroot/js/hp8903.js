@@ -58,21 +58,7 @@ function submit_measure(form, event) {
     measure(url, type, steps, freq1, freq2, amp1, amp2, title);
 }
 
-function init_hp8903() {
-    $( "#measure-form" ).submit(function( event ) {
-        submit_measure($(this), event);
-    });
-
-    $("#keep-measurements").click(function() {
-        localStorage.setItem("keep-measurements", $("#keep-measurements").prop('checked'));
-    })
-
-    $("#output-clear-all").click(function() {
-        localStorage.setItem("measurements", null);
-        localStorage.setItem("current_measurement", null);
-
-        $('#output_old').html("");
-    })
+function restoreLocalStorageState() {
 
     var measurements = localStorage.getItem("measurements");
     var current_measurement = localStorage.getItem("current_measurement");
@@ -87,4 +73,24 @@ function init_hp8903() {
     if (keep_measurements != null) {
         $("#keep-measurements").prop('checked', keep_measurements);
     }
+}
+
+function init_hp8903() {
+    $( "#measure-form" ).submit(function( event ) {
+        submit_measure($(this), event);
+    });
+
+    $("#keep-measurements").click(function() {
+        localStorage.setItem("keep-measurements", $("#keep-measurements").prop('checked'));
+    });
+
+    $("#output-clear-all").click(function() {
+        localStorage.setItem("measurements", null);
+        localStorage.setItem("current_measurement", null);
+
+        $('#output_old').html("");
+    });
+
+    restoreLocalStorageState();
+
 }
