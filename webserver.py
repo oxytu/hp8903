@@ -43,7 +43,7 @@ class Hp8903Server(object):
 
         if "x-content-encoding" in cherrypy.request.headers and cherrypy.request.headers["x-content-encoding"] == "base64":
             cherrypy.response.headers['Content-Type'] = "text/plain; charset=ISO-8859-1"
-            return base64.b64encode(output_buffer)
+            return base64.b64encode(output_buffer.read())
         else:
             cherrypy.response.headers['Content-Type'] = "image/png"
             return file_generator(output_buffer)
