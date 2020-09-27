@@ -7,8 +7,8 @@ function measure_success(data, textStatus, jqXHR) {
     if ($("#keep-measurements").prop('checked')) {
         $("#output_measurement").clone().prop('id', 'output_measurement_' + uniqId() ).prependTo("#output_old");
     }
-    $("#output_measurement.output_date").text("Date: " + new Date());
-    $("#output_measurement.output_image").attr("src", "data:image/png;base64," + data);
+    $("#output_measurement > .output_date").text("Date: " + new Date());
+    $("#output_measurement > .output_image").attr("src", "data:image/png;base64," + data);
 }
 
 function measure(url, type, steps, freq1, freq2, amp1, amp2, title) {
