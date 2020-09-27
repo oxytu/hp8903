@@ -31,12 +31,12 @@ function measure(url, type, steps, freq1, freq2, amp1, amp2, title) {
     })
 }
 
-function submit_measure(event) {
+function submit_measure(this, event) {
     // Stop form from submitting normally
     event.preventDefault();
 
     // Get some values from elements on the page:
-    var $form = $( this ),
+    var $form = this,
     type = $form.find( "select[name='type']" ).val(),
     steps = $form.find( "input[name='steps']" ).val(),
     freq1 = $form.find( "input[name='freq1']" ).val(),
@@ -52,6 +52,6 @@ function submit_measure(event) {
 
 function init_hp8903() {
     $( "#measure-form" ).submit(function( event ) {
-        submit_measure(event);
+        submit_measure($(this), event);
     });
 }
