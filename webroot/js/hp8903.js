@@ -1,6 +1,6 @@
 
 function measure_success(data, textStatus, jqXHR) {
-    if ($("#keep-measurements").val()) {
+    if ($("#keep-measurements").prop('checked')) {
         $("#output_image").clone().prepend("#output_old");
     }
     $("#output_image").attr("src", "data:image/png;base64," + data);
