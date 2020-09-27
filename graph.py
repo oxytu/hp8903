@@ -27,7 +27,7 @@ def load_csv(measurement, filecontent, reference_level):
 
             x.append(freq)
             y.append(level)
-        if measurement == "THD_LVL" or measurement == "THDLV_LVL" or measurement="SNR_LVL":
+        if measurement == "THD_LVL" or measurement == "THDLV_LVL" or measurement == "SNR_LVL":
             if (row[0] == 'None' or row[2] == 'None'):
                 continue
             out_volt = float(row[0])
