@@ -63,6 +63,10 @@ function init_hp8903() {
         submit_measure($(this), event);
     });
 
+    $("#keep-measurements").click(function() {
+        localStorage.setItem("keep-measurements", $("#keep-measurements").prop('checked'));
+    })
+
     $("#output-clear-all").click(function() {
         localStorage.setItem("measurements", null);
         localStorage.setItem("current_measurement", null);
@@ -72,11 +76,15 @@ function init_hp8903() {
 
     var measurements = localStorage.getItem("measurements");
     var current_measurement = localStorage.getItem("current_measurement");
+    var keep_measurements = localStorage.getItem("ckeep-measurements");
     
     if (current_measurement != null) {
         $('#output_measurement').html(current_measurement);
     }
     if (measurements != null) {
         $('#output_old').html(measurements);
+    }
+    if (keep_measurements != null) {
+        $("#keep-measurements").prop('checked', keep_measurements);
     }
 }
