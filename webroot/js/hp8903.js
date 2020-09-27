@@ -33,11 +33,11 @@ function init_hp8903() {
         // Get some values from elements on the page:
         var $form = $( this ),
         type = $form.find( "select[name='type']" ).val(),
-        steps = $form.find( "select[name='steps']" ).val(),
-        freq1 = $form.find( "select[name='freq1']" ).val(),
-        freq2 = $form.find( "select[name='freq2']" ).val(),
-        amp1 = $form.find( "select[name='amp1']" ).val(),
-        amp2 = $form.find( "select[name='amp2']" ).val()
+        steps = $form.find( "input[name='steps']" ).val(),
+        freq1 = $form.find( "input[name='freq1']" ).val(),
+        freq2 = $form.find( "input[name='freq2']" ).val(),
+        amp1 = $form.find( "input[name='amp1']" ).val(),
+        amp2 = $form.find( "input[name='amp2']" ).val()
 
         url = $form.attr( "action" );
 
