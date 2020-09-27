@@ -31,12 +31,12 @@ function measure(url, type, steps, freq1, freq2, amp1, amp2, title) {
     })
 }
 
-function submit_measure(this, event) {
+function submit_measure(form, event) {
     // Stop form from submitting normally
     event.preventDefault();
 
     // Get some values from elements on the page:
-    var $form = this,
+    var $form = form,
     type = $form.find( "select[name='type']" ).val(),
     steps = $form.find( "input[name='steps']" ).val(),
     freq1 = $form.find( "input[name='freq1']" ).val(),
