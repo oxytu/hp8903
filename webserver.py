@@ -41,7 +41,7 @@ class Hp8903Server(object):
         output_buffer.seek(0)
 
 
-        if cherrypy.request.headers.has_key("x-content-encoding") and cherrypy.request.headers["x-content-encoding"]:
+        if "x-content-encoding" in cherrypy.request.headers and cherrypy.request.headers["x-content-encoding"] == "base64":
             cherrypy.response.headers['Content-Type'] = "text/plain; charset=ISO-8859-1"
             return base64.b64encode(output_buffer)
         else:
