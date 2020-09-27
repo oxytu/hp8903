@@ -100,7 +100,7 @@ def configure_plot_lvl_frq(plt, calibration, x, y):
         plt.ylabel('Level [dBu]')
     define_db_scale(plt, "y", y)
 
-def configure_plot_thd_lvl(plt, x, y), levelType:
+def configure_plot_thd_lvl(plt, x, y, levelType):
     plt.xlabel('Generator Level [dBu]')    
     plt.ylabel(f"{levelType} [dB]")
 
