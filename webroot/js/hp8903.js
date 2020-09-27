@@ -10,7 +10,8 @@ function measure_success(data, textStatus, jqXHR) {
     $("#output_measurement > .output_date").text("Date: " + new Date());
     $("#output_measurement > .output_image").attr("src", "data:image/png;base64," + data);
 
-    localStorage.setItem('measurements', $('#output_measurement').html());
+    localStorage.setItem('current_measurement', $('#output_measurement').html());
+    localStorage.setItem('measurements', $('#output_old').html());
 }
 
 function measure(url, type, steps, freq1, freq2, amp1, amp2, title) {
@@ -64,10 +65,18 @@ function init_hp8903() {
 
     $("#output-clear-all").click(function() {
         localStorage.setItem("measurements", null);
+        localStorage.setItem("current_measurement", null);
+
+        $('#output_old').html("");
     })
 
     var measurements = localStorage.getItem("measurements");
+    var current_measurement = localStorage.getItem("current_measurement");
+    
+    if (current_measurement != null) {
+        $('#output_measurement').html(current_measurement);
+    }
     if (measurements != null) {
-        $('#output_measurement').html(measurements);
+        $('#output_old').html(measurements);
     }
 }
