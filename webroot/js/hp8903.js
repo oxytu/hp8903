@@ -5,6 +5,7 @@ function measure_success(data, textStatus, jqXHR) {
 
 function measure(url, type, steps, freq1, freq2, amp1, amp2) {
     $("#start-measurement").prop("disabled",true);
+    $("#measurement-in-progress").show();
     $.ajax({
         url: url,
         type: 'post',
@@ -22,6 +23,7 @@ function measure(url, type, steps, freq1, freq2, amp1, amp2) {
         alert("AJAX request failed: " + textStatus + "\n" + errorThrown);
     }).always(function() {
         $("#start-measurement").prop("disabled", false);
+        $("#measurement-in-progress").hide();
     })
 }
 
