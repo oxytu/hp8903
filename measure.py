@@ -71,6 +71,21 @@ def measure_thd_freq(gpib, start_freq, max_freq, steps_per_octave, amplitude, pe
 	init_command = hp8903_freq(start_freq) + hp8903_ampl(amplitude) + hp8903_meas(Measurement.DISTORTION) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_FREERUN)
 	generic_sweep_measurement(gpib, init_command, start_freq, max_freq, steps_per_octave, hp8903_freq, persistor)
 
+def measure_thdlv_level(gpib, start_ampl, max_ampl, steps_per_octave, frequency, persistor, stream):
+	print("# THDLV_LVL Measurement, start_ampl=" + str(start_ampl) + ", max_ampl=" + str(max_ampl) + ", frequency=" + str(frequency) + ", steps_per_oct=" + str(steps_per_octave), file=stream)
+	init_command = hp8903_freq(frequency) + hp8903_ampl(start_ampl) + hp8903_meas(Measurement.DISTORTION_LEVEL) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_FREERUN)
+	generic_sweep_measurement(gpib, init_command, start_ampl, max_ampl, steps_per_octave, hp8903_ampl, persistor)
+
+def measure_thdlv_freq(gpib, start_freq, max_freq, steps_per_octave, amplitude, persistor, stream):
+	print("# THDLV_FRQ Measurement, start_freq=" + str(start_freq) + ", max_freq=" + str(max_freq) + ", amplitude=" + str(amplitude) + ", steps_per_oct=" + str(steps_per_octave), file=stream)
+	init_command = hp8903_freq(start_freq) + hp8903_ampl(amplitude) + hp8903_meas(Measurement.DISTORTION_LEVEL) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_FREERUN)
+	generic_sweep_measurement(gpib, init_command, start_freq, max_freq, steps_per_octave, hp8903_freq, persistor)
+
+def measure_snr_level(gpib, start_ampl, max_ampl, steps_per_octave, frequency, persistor, stream):
+	print("# SNR_LVL Measurement, start_ampl=" + str(start_ampl) + ", max_ampl=" + str(max_ampl) + ", frequency=" + str(frequency) + ", steps_per_oct=" + str(steps_per_octave), file=stream)
+	init_command = hp8903_freq(frequency) + hp8903_ampl(start_ampl) + hp8903_meas(Measurement.SNR) + hp8903_filter(Filters.HP_OFF) + hp8903_filter(Filters.LP_OFF) + hp8903_trigger(Trigger.TRIG_FREERUN)
+	generic_sweep_measurement(gpib, init_command, start_ampl, max_ampl, steps_per_octave, hp8903_ampl, persistor)
+
 def init_argparse() -> argparse.ArgumentParser:
 	parser = argparse.ArgumentParser(
 		usage="%(prog)s [options]",
@@ -85,7 +100,7 @@ def init_argparse() -> argparse.ArgumentParser:
 		"-m", "--measure",
 		action='store',
 		default="LVL_FRQ",
-		choices=["LVL_FRQ", "THD_LVL", "THD_FRQ", "SNR_LVL"],
+		choices=["LVL_FRQ", "THD_LVL", "THD_FRQ", "THDLV_LVL", "THDLV_FRQ", "SNR_LVL"],
 		help="What measurement to perform"
 	)
 	parser.add_argument(
@@ -141,6 +156,12 @@ def measure(args, output) -> None:
 			measure_thd_level(gpib, args.start_amplitude, args.stop_amplitude, args.steps, args.start_frequency, persist_meas_result(output), output)
 		elif (args.measure == "THD_FRQ"):
 			measure_thd_freq(gpib, args.start_frequency, args.stop_frequency, args.steps, args.start_amplitude, persist_meas_result(output), output)
+		elif (args.measure == "THDLV_LVL"):
+			measure_thdlv_level(gpib, args.start_amplitude, args.stop_amplitude, args.steps, args.start_frequency, persist_meas_result(output), output)
+		elif (args.measure == "THDLV_FRQ"):
+			measure_thdlv_freq(gpib, args.start_frequency, args.stop_frequency, args.steps, args.start_amplitude, persist_meas_result(output), output)
+		elif (args.measure == "SNR_LVL"):
+			measure_snr_level(gpib, args.start_amplitude, args.stop_amplitude, args.steps, args.start_frequency, persist_meas_result(output), output)
 		else:
 			print("Not yet supported: " + args.measure, file=output)
 

@@ -27,7 +27,7 @@ def load_csv(measurement, filecontent, reference_level):
 
             x.append(freq)
             y.append(level)
-        if measurement == "THD_LVL":
+        if measurement == "THD_LVL" or measurement == "THDLV_LVL" or measurement="SNR_LVL":
             if (row[0] == 'None' or row[2] == 'None'):
                 continue
             out_volt = float(row[0])
@@ -38,7 +38,7 @@ def load_csv(measurement, filecontent, reference_level):
 
             x.append(out_volt)
             y.append(in_level)
-        if measurement == "THD_FRQ":
+        if measurement == "THD_FRQ" or measurement == "THDLV_FRQ":
             if (row[0] == 'None' or row[2] == 'None'):
                 continue
             freq = float(row[0])
@@ -100,19 +100,19 @@ def configure_plot_lvl_frq(plt, calibration, x, y):
         plt.ylabel('Level [dBu]')
     define_db_scale(plt, "y", y)
 
-def configure_plot_thd_lvl(plt, x, y):
+def configure_plot_thd_lvl(plt, x, y), levelType:
     plt.xlabel('Generator Level [dBu]')    
-    plt.ylabel('THD Level [dB]')
+    plt.ylabel(f"{levelType} [dB]")
 
     define_db_scale(plt, "x", x)
     define_db_scale(plt, "y", y)
 
-def configure_plot_thd_frq(plt, x, y):
+def configure_plot_thd_frq(plt, x, y, levelType):
     plt.xscale("log")
     plt.xlabel('Frequency [Hz]')
     
 
-    plt.ylabel('THD Level [dB]')
+    plt.ylabel(f"{levelType} [dB]")
     define_db_scale(plt, "y", y)
 
 def create_graph(measure, file_contents, output_format, output_buffer, calibration, graph_style, reference_level, title) -> None:
@@ -125,9 +125,15 @@ def create_graph(measure, file_contents, output_format, output_buffer, calibrati
     if measure == "LVL_FRQ":
         configure_plot_lvl_frq(plt, calibration, x, y)
     elif measure == "THD_LVL":
-        configure_plot_thd_lvl(plt, x, y)
+        configure_plot_thd_lvl(plt, x, y, "THD")
     elif measure == "THD_FRQ":
-        configure_plot_thd_frq(plt, x, y)
+        configure_plot_thd_frq(plt, x, y, "THD")
+    elif measure == "THDLV_LVL":
+        configure_plot_thd_lvl(plt, x, y, "THD Level")
+    elif measure == "THDLV_FRQ":
+        configure_plot_thd_frq(plt, x, y, "THD Level")
+    elif measure == "SNR_LVL":
+        configure_plot_thd_lvl(plt, x, y, "SNR")
 
     plt.grid()
     plt.plot(x, y, label=measure)
@@ -168,7 +174,7 @@ def init_argparse() -> argparse.ArgumentParser:
 		"-m", "--measure",
 		action='store',
 		default="LVL_FRQ",
-		choices=["LVL_FRQ", "THD_LVL", "THD_FRQ", "SNR_LVL"],
+		choices=["LVL_FRQ", "THD_LVL", "THD_FRQ", "THDLV_LVL", "THDLV_FRQ", "SNR_LVL"],
 		help="What type measurement to graph"
 	)
     parser.add_argument(
