@@ -9,6 +9,8 @@ function measure_success(data, textStatus, jqXHR) {
     }
     $("#output_measurement > .output_date").text("Date: " + new Date());
     $("#output_measurement > .output_image").attr("src", "data:image/png;base64," + data);
+
+    localStorage.setItem('measurements', $('#output_measurement').html());
 }
 
 function measure(url, type, steps, freq1, freq2, amp1, amp2, title) {
@@ -59,4 +61,13 @@ function init_hp8903() {
     $( "#measure-form" ).submit(function( event ) {
         submit_measure($(this), event);
     });
+
+    $("#output-clear-all").click(function() {
+        localStorage.setItem("measurements", null);
+    })
+
+    var measurements = localStorage.getItem("measurements");
+    if (measurements != null) {
+        $('#output_measurement').html(measurements);
+    }
 }

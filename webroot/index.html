@@ -36,23 +36,23 @@
                         </div>
                         <div class="form-group">
                             <label for="steps">Points per Octave</label>
-                            <input class="form-control" type="number" id="steps" name="steps" value="2" placeholder="2">
+                            <input class="form-control" type="number" id="steps" name="steps" value="2" placeholder="2" min="1" max="50">
                         </div>
                         <div class="form-group">
                             <label for="freq1">(Start) Frequency (Hz)</label>
-                            <input class="form-control" type="number" id="freq1" name="freq1" step="1" value="20" placeholder="20">
+                            <input class="form-control" type="number" id="freq1" name="freq1" step="1" value="20" placeholder="20" max="150000" min="20">
                         </div>
                         <div class="form-group">
                             <label for="freq2">Stop Frequency (Hz)</label>
-                            <input class="form-control" type="number" id="freq2" name="freq2" step="1" value="40000" placeholder="40000">
+                            <input class="form-control" type="number" id="freq2" name="freq2" step="1" value="40000" placeholder="40000" max="150000" min="20">
                         </div>
                         <div class="form-group">
                             <label for="amp1">(Start) Amplitude (Volt)</label>
-                            <input class="form-control" type="number" id="amp1" name="amp1" step=".001" value="0.1" placeholder="0.1">
+                            <input class="form-control" type="number" id="amp1" name="amp1" step=".001" value="0.001" placeholder="0.1" max="6">
                         </div>
                         <div class="form-group">
                             <label for="amp2">Stop Amplitude (Volt)</label>
-                            <input class="form-control" type="number" id="amp2" name="amp2" step=".001" value="5" placeholder="5">
+                            <input class="form-control" type="number" id="amp2" name="amp2" step=".001" value="5" placeholder="5" max="6">
                         </div>
                         <button type="submit" class="btn btn-primary" id="start-measurement">Start Measurement</button>
                         <div id="measurement-in-progress" style="display: none; font-weight: bold;">Measurement is in progress...</div>
@@ -66,7 +66,9 @@
                                 Keep old measurements
                             </label>
                         </div>
-                        
+                    </div>
+                    <div id="output-actions">
+                        <button class="btn btn-primary" id="output-clear-all">Clear all</button>
                     </div>
                     <div id="output">
                         <div id="output_measurement" class="jumbotron">
