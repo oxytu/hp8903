@@ -43,6 +43,7 @@ class Hp8903Server(object):
 
 WEBROOT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),"webroot/")
 
+cherrypy.server.socket_host = '0.0.0.0'
 cherrypy.quickstart(Hp8903Server(), '/', {
     '/css': {
         'tools.staticdir.on': True,
