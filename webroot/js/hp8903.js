@@ -1,9 +1,14 @@
 
+function uniqId() {
+    return Math.round(new Date().getTime() + (Math.random() * 10000));
+  }
+
 function measure_success(data, textStatus, jqXHR) {
     if ($("#keep-measurements").prop('checked')) {
-        $("#output_image").clone().prepend("#output_old");
+        $("#output_measurement").clone().prop('id', 'output_measurement_' + uniqId() ).prependTo("#output_old");
     }
-    $("#output_image").attr("src", "data:image/png;base64," + data);
+    $("#output_measurement.output_date").text("Date: " + new Date());
+    $("#output_measurement.output_image").attr("src", "data:image/png;base64," + data);
 }
 
 function measure(url, type, steps, freq1, freq2, amp1, amp2, title) {
