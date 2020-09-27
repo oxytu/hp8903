@@ -2,8 +2,9 @@ import cherrypy
 import os
 
 import measure
-import graph#
+import graph
 import io
+import base64
 
 from types import SimpleNamespace
 from cherrypy.lib import file_generator
@@ -28,7 +29,8 @@ class Hp8903Server(object):
         output = io.StringIO()
         measure.measure(args, output)
 
-        return self.graph(type, output.getvalue())
+        image = self.graph(type, output.getvalue())
+        return image
 
         #return f"Type={type}, steps={steps}, freq1={freq1}, freq2={freq2}, amp1={amp1}, amp2={amp2}\n{output.getvalue()}"
 
@@ -37,8 +39,15 @@ class Hp8903Server(object):
         output_buffer = io.BytesIO()
         graph.create_graph(type, csv, "png", output_buffer, None, 'style/theta.mplstyle', None)
         output_buffer.seek(0)
-        cherrypy.response.headers['Content-Type'] = "image/png"
-        return file_generator(output_buffer)
+
+
+        if cp.request.headers.has_key("x-content-encoding") and cp.request.headers["x-content-encoding"]:
+            cherrypy.response.headers['Content-Type'] = "text/plain; charset=ISO-8859-1"
+            return base64.b64encode(output_buffer)
+        else:
+            cherrypy.response.headers['Content-Type'] = "image/png"
+            return file_generator(output_buffer)
+
 
 
 WEBROOT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),"webroot/")
