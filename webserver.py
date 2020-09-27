@@ -19,14 +19,17 @@ class Hp8903Server(object):
     @cherrypy.expose
     def measure(self, type=None, steps=None, freq1=None, freq2=None, amp1=None, amp2=None):
         args = {
+            'steps': int(steps),
             'start_frequency': int(freq1),
             'stop_frequency': int(freq2),
             'start_amplitude': float(amp1),
             'stop_amplitude': float(amp2),
             'measure': type
         }
+        
         args = SimpleNamespace(**args)
         output = io.StringIO()
+
         measure.measure(args, output)
 
         image = self.graph(type, output.getvalue())
