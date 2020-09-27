@@ -28,6 +28,10 @@
                             </select>
                         </div>
                         <div class="form-group">
+                            <label for="title">Title</label>
+                            <input class="form-control" type="text" id="title" name="title" value="Measurement Title">
+                        </div>
+                        <div class="form-group">
                             <label for="steps">Points per Octave</label>
                             <input class="form-control" type="number" id="steps" name="steps" value="2" placeholder="2">
                         </div>
@@ -48,7 +52,7 @@
                             <input class="form-control" type="number" id="amp2" name="amp2" step=".001" value="5" placeholder="5">
                         </div>
                         <button type="submit" class="btn btn-primary" id="start-measurement">Start Measurement</button>
-                        <div id="measurement-in-progress" style="display: none;">Measurement is in progress...</div>
+                        <div id="measurement-in-progress" style="display: none; font-weight: bold;">Measurement is in progress...</div>
                     </form>
                 </div>
                 <div class="col-8">

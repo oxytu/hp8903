@@ -115,7 +115,7 @@ def configure_plot_thd_frq(plt, x, y):
     plt.ylabel('THD Level [dB]')
     define_db_scale(plt, "y", y)
 
-def create_graph(measure, file_contents, output_format, output_buffer, calibration, graph_style, reference_level) -> None:
+def create_graph(measure, file_contents, output_format, output_buffer, calibration, graph_style, reference_level, title) -> None:
     measurement = load_csv(measure, file_contents, reference_level)
     (x, y) = apply_calibration(calibration, measurement)
 
@@ -130,8 +130,8 @@ def create_graph(measure, file_contents, output_format, output_buffer, calibrati
         configure_plot_thd_frq(plt, x, y)
 
     plt.grid()
-    plt.plot(x, y, label="Frequency Response ")
-    plt.title(f"Measurement")
+    plt.plot(x, y, label=measure)
+    plt.title(title)
     plt.legend()
 
     if (output_format is None):
@@ -152,7 +152,7 @@ def create_graphs(measure, files, output_format, calibration_file, graph_style, 
         with open(filename, 'r') as csvfile:
             file_content = csvfile.read()
             output_buffer = io.BytesIO()
-            create_graph(measure, file_content, output_format, output_buffer, calibration, graph_style, reference_level)
+            create_graph(measure, file_content, output_format, output_buffer, calibration, graph_style, reference_level, filename)
             output_buffer.seek(0)
             with open(f"{filename}.{output_format}", "wb") as f:
                 f.write(output_buffer.getbuffer())

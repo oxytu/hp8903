@@ -3,7 +3,7 @@ function measure_success(data, textStatus, jqXHR) {
     $("#output_image").attr("src", "data:image/png;base64," + data);
 }
 
-function measure(url, type, steps, freq1, freq2, amp1, amp2) {
+function measure(url, type, steps, freq1, freq2, amp1, amp2, title) {
     $("#start-measurement").prop("disabled",true);
     $("#measurement-in-progress").show();
     $.ajax({
@@ -15,7 +15,8 @@ function measure(url, type, steps, freq1, freq2, amp1, amp2) {
             freq1: freq1,
             freq2: freq2,
             amp1: amp1,
-            amp2: amp2
+            amp2: amp2,
+            title: title
         },
         headers: { 'x-content-encoding': 'base64' },
         success: measure_success
@@ -39,10 +40,11 @@ function init_hp8903() {
         freq1 = $form.find( "input[name='freq1']" ).val(),
         freq2 = $form.find( "input[name='freq2']" ).val(),
         amp1 = $form.find( "input[name='amp1']" ).val(),
-        amp2 = $form.find( "input[name='amp2']" ).val()
+        amp2 = $form.find( "input[name='amp2']" ).val(),
+        title = $form.find( "input[name='title']" ).val()
 
         url = $form.attr( "action" );
 
-        measure(url, type, steps, freq1, freq2, amp1, amp2);
+        measure(url, type, steps, freq1, freq2, amp1, amp2, title);
     });
 }

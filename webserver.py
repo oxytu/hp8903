@@ -17,7 +17,7 @@ class Hp8903Server(object):
         cherrypy.response.status = 301
 
     @cherrypy.expose
-    def measure(self, type=None, steps=None, freq1=None, freq2=None, amp1=None, amp2=None):
+    def measure(self, type=None, steps=None, freq1=None, freq2=None, amp1=None, amp2=None, title=None):
         args = {
             'steps': int(steps),
             'start_frequency': int(freq1),
@@ -32,15 +32,15 @@ class Hp8903Server(object):
 
         measure.measure(args, output)
 
-        image = self.graph(type, output.getvalue())
+        image = self.graph(type, title, output.getvalue())
         return image
 
         #return f"Type={type}, steps={steps}, freq1={freq1}, freq2={freq2}, amp1={amp1}, amp2={amp2}\n{output.getvalue()}"
 
     @cherrypy.expose
-    def graph(self, type=None, csv=None):
+    def graph(self, type=None, title=None, csv=None):
         output_buffer = io.BytesIO()
-        graph.create_graph(type, csv, "png", output_buffer, None, 'style/theta.mplstyle', None)
+        graph.create_graph(type, csv, "png", output_buffer, None, 'style/theta.mplstyle', None, title)
         output_buffer.seek(0)
 
 
