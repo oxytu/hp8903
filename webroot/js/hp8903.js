@@ -60,7 +60,7 @@ function submit_measure(form, event) {
 
 function restoreLocalStorageState() {
     var measurements = localStorage.getItem("measurements");
-    var keep_measurements = localStorage.getItem("ckeep-measurements");
+    var keep_measurements = localStorage.getItem("keep-measurements");
 
     if (measurements != null) {
         $('#output_old').html(measurements);
