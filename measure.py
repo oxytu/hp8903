@@ -2,6 +2,7 @@ import serial
 import yaml
 import argparse
 from hp8903 import *
+import sys
 
 config = yaml.load(open('config.yml'), Loader=yaml.FullLoader)
 
