@@ -139,7 +139,7 @@ def init_argparse() -> argparse.ArgumentParser:
 	parser.add_argument(
 		"-a2", "--stop-amplitude",
 		action='store',
-		type=int,
+		type=float,
 		default=6,
 		metavar='VOLT',
 		help="Stop Amplitude (if applicable for measurement type)"

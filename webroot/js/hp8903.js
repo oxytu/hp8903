@@ -46,14 +46,32 @@ function submit_measure(form, event) {
     // Get some values from elements on the page:
     var $form = form,
     type = $form.find( "select[name='type']" ).val(),
-    steps = $form.find( "input[name='steps']" ).val(),
+    
+    freq_steps = $form.find( "input[name='freq-steps']" ).val(),
+    freq = $form.find( "input[name='freq']" ).val(),
     freq1 = $form.find( "input[name='freq1']" ).val(),
     freq2 = $form.find( "input[name='freq2']" ).val(),
+
+    amp_steps = $form.find( "input[name='amp-steps']" ).val(),
+    amp = $form.find( "input[name='amp']" ).val(),
     amp1 = $form.find( "input[name='amp1']" ).val(),
     amp2 = $form.find( "input[name='amp2']" ).val(),
+
     title = $form.find( "input[name='title']" ).val()
 
     url = $form.attr( "action" );
+
+    var steps = 1;
+
+    if (type.endsWith("_LVL")) {
+        freq1 = freq;
+        // freq2 is ignored in implementation
+        steps = amp_steps;
+    } else if (type.endsWith("_FRQ")) {
+        amp1 = amp;
+        // amp2 is ignored in implementation
+        steps = freq_steps;
+    }
 
     measure(url, type, steps, freq1, freq2, amp1, amp2, title);
 }
@@ -70,6 +88,24 @@ function restoreLocalStorageState() {
     }
 }
 
+function show_hide_formcontrols() {
+    var measurement = $("#type").val();
+    if (measurement.endsWith("_FRQ")) {
+        //.find(':input').prop("disabled", false)
+        $(".amp-static").show();
+        $(".amp-sweep").hide();
+
+        $(".freq-static").hide();
+        $(".freq-sweep").show();
+    } else if (measurement.endsWith("_LVL")) {
+        $(".amp-static").hide();
+        $(".amp-sweep").show();
+
+        $(".freq-static").show();
+        $(".freq-sweep").hide();
+    }
+}
+
 function init_hp8903() {
     $( "#measure-form" ).submit(function( event ) {
         submit_measure($(this), event);
@@ -81,9 +117,12 @@ function init_hp8903() {
 
     $("#output-clear-all").click(function() {
         localStorage.setItem("measurements", null);
-
         $('#output_old').html("");
     });
+
+    $("#type").change(function() { show_hide_formcontrols() });
+
+    show_hide_formcontrols();
 
     restoreLocalStorageState();
 
