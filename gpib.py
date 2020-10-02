@@ -2,7 +2,7 @@ import serial
 
 PARITY_NONE = serial.PARITY_NONE
 
-class GPIB(Object):
+class GPIB:
     serial = None
     encoding = None
     debug = False

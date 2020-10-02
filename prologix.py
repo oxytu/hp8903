@@ -1,6 +1,6 @@
 import gpib
 
-class Prologix(GPIB):
+class Prologix(gpib.GPIB):
 
     def init(self):
         self.gpib_send(gpib, "++mode 1")

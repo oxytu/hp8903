@@ -32,7 +32,7 @@ class Trigger(Enum):
 	TRIG_HOLD = "T1"
 	TRIG_SETTLING = "T3"
 
-class HP8903(Object):
+class HP8903:
 	gpib = None
 
 	def __init__(self, gpib):
