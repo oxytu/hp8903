@@ -71,6 +71,13 @@ function submit_measure(form, event) {
         amp1 = amp;
         // amp2 is ignored in implementation
         steps = freq_steps;
+    } else if (type.startsWith("MULTI_")) {
+        if (type == "MULTI_FR_THD") {
+            measure(url, "LVL_FRQ", freq_steps, freq1, freq2, amp, amp2, title + " (Freq. Resp.)");
+            measure(url, "THDLV_LVL", amp_steps, freq, freq2, amp1, amp2, title + " (Clipping Behaviour)");
+            measure(url, "THDLV_FRQ", freq_steps, freq1, freq2, amp, amp2, title + " (THD+N)");
+        }
+        return
     }
 
     measure(url, type, steps, freq1, freq2, amp1, amp2, title);
@@ -103,6 +110,12 @@ function show_hide_formcontrols() {
 
         $(".freq-static").show();
         $(".freq-sweep").hide();
+    } else if (measurement.startsWith("MULTI_")) {
+        $(".amp-static").show();
+        $(".amp-sweep").show();
+
+        $(".freq-static").show();
+        $(".freq-sweep").show();
     }
 }
 

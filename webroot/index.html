@@ -26,16 +26,23 @@
                             </div>
                             <div class="form-group">
                                 <label for="title">Title</label>
-                                <input class="form-control" type="text" id="title" name="title" value="Measurement Title">
+                                <input class="form-control" type="text" id="title" name="title" placeholder="Measurement Title" required>
                             </div>
                             <div class="form-group">
                                 <label for="type">What measurement do you want to start?</label>
                                 <select class="form-control" id="type" name="type">
-                                    <option value="LVL_FRQ">Level/Frequency Diagram</option>
-                                    <option value="THD_LVL">THD/Level Diagram (DIST)</option>
-                                    <option value="THD_FRQ">THD/Frequency Diagram (DIST)</option>
-                                    <option value="THDLV_LVL">THD-Level/Level Diagram (DIST-LEVEL)</option>
-                                    <option value="THDLV_FRQ">THD-Level/Frequency Diagram (DIST-LEVEL)</option>
+                                    <optgroup label="Frequency Response">
+                                        <option value="LVL_FRQ">Level/Frequency Diagram</option>
+                                    </optgroup>
+                                    <optgroup label="THD+N">
+                                        <option value="THD_LVL">THD/Level Diagram (DIST)</option>
+                                        <option value="THD_FRQ">THD/Frequency Diagram (DIST)</option>
+                                        <option value="THDLV_LVL">THD-Level/Level Diagram (DIST-LEVEL)</option>
+                                        <option value="THDLV_FRQ">THD-Level/Frequency Diagram (DIST-LEVEL)</option>
+                                    </optgroup>
+                                    <optgroup label="Multi Measurements">
+                                        <option value="MULTI_FR_THD">Multi: Frequency Response and THD (3)</option>
+                                    </optgroup>
                                     <!--<option value="SNR_LVL">SNR/Level Diagram</option>-->
                                 </select>
                             </div>
@@ -50,7 +57,7 @@
                                 </div>
                                 <div class="form-group col-auto">
                                     <label for="freq">Frequency</label>
-                                    <input class="form-control" type="number" id="freq" name="freq" step="1" value="20" placeholder="20" max="150000" min="20">
+                                    <input class="form-control" type="number" id="freq" name="freq" step="1" value="1000" placeholder="20" max="150000" min="20">
                                 </div>
                             </div>
                             <div class="form-row freq-sweep">
@@ -67,7 +74,7 @@
                                 </div>
                                 <div class="form-group col-auto">
                                     <label for="steps">Pts/Oct</label>
-                                    <input class="form-control" type="number" id="steps" name="freq-steps" value="2" placeholder="2" min="1" max="50">
+                                    <input class="form-control" type="number" id="steps" name="freq-steps" value="3" placeholder="3" min="1" max="50">
                                 </div>
                             </div>
                         </div>
@@ -98,7 +105,7 @@
                                 </div>
                                 <div class="form-group col-auto">
                                     <label for="steps">Pts/Oct</label>
-                                    <input class="form-control" style="width: 50px" type="number" id="steps" name="amp-steps" value="2" placeholder="2" min="1" max="50">
+                                    <input class="form-control" style="width: 50px" type="number" id="steps" name="amp-steps" value="3" placeholder="3" min="1" max="50">
                                 </div>
                             </div>
                         </div>
