@@ -18,78 +18,88 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-5">
+                    <h2>Configure</h2>
                     <form action="/measure" method="POST" id="measure-form">
-                        <div class="form-group">
-                            <label for="type">What measurement do you want to start?</label>
-                            <select class="form-control" id="type" name="type">
-                                <option value="LVL_FRQ">Level/Frequency Diagram</option>
-                                <option value="THD_LVL">THD/Level Diagram (DIST)</option>
-                                <option value="THD_FRQ">THD/Frequency Diagram (DIST)</option>
-                                <option value="THDLV_LVL">THD-Level/Level Diagram (DIST-LEVEL)</option>
-                                <option value="THDLV_FRQ">THD-Level/Frequency Diagram (DIST-LEVEL)</option>
-                                <!--<option value="SNR_LVL">SNR/Level Diagram</option>-->
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="title">Title</label>
-                            <input class="form-control" type="text" id="title" name="title" value="Measurement Title">
-                        </div>
-                        <div class="form-row">
-                            <h5>Frequency (Hz)</h5>
-                        </div>
-                        <div class="form-row freq-static">
-                            <div class="col-auto">
-                                Static
+                        <div class="border border-primary rounded p-3 m-1">
+                            <div class="form-row">
+                                <h5>Basics</h5>
                             </div>
-                            <div class="form-group col-auto">
-                                <label for="freq">Frequency</label>
-                                <input class="form-control" type="number" id="freq" name="freq" step="1" value="20" placeholder="20" max="150000" min="20">
+                            <div class="form-group">
+                                <label for="title">Title</label>
+                                <input class="form-control" type="text" id="title" name="title" value="Measurement Title">
+                            </div>
+                            <div class="form-group">
+                                <label for="type">What measurement do you want to start?</label>
+                                <select class="form-control" id="type" name="type">
+                                    <option value="LVL_FRQ">Level/Frequency Diagram</option>
+                                    <option value="THD_LVL">THD/Level Diagram (DIST)</option>
+                                    <option value="THD_FRQ">THD/Frequency Diagram (DIST)</option>
+                                    <option value="THDLV_LVL">THD-Level/Level Diagram (DIST-LEVEL)</option>
+                                    <option value="THDLV_FRQ">THD-Level/Frequency Diagram (DIST-LEVEL)</option>
+                                    <!--<option value="SNR_LVL">SNR/Level Diagram</option>-->
+                                </select>
                             </div>
                         </div>
-                        <div class="form-row freq-sweep">
-                            <div class="col-auto">
-                                Sweep
+                        <div class="border border-primary rounded p-3 m-1">
+                            <div class="form-row">
+                                <h5>Frequency (Hz)</h5>
                             </div>
-                            <div class="form-group col-auto">
-                                <label for="freq1">Start</label>
-                                <input class="form-control" type="number" id="freq1" name="freq1" step="1" value="20" placeholder="20" max="150000" min="20">
+                            <div class="form-row freq-static">
+                                <div class="col-auto">
+                                    Static
+                                </div>
+                                <div class="form-group col-auto">
+                                    <label for="freq">Frequency</label>
+                                    <input class="form-control" type="number" id="freq" name="freq" step="1" value="20" placeholder="20" max="150000" min="20">
+                                </div>
                             </div>
-                            <div class="form-group col-auto">
-                                <label for="freq2">Stop</label>
-                                <input class="form-control" type="number" id="freq2" name="freq2" step="1" value="40000" placeholder="40000" max="150000" min="20">
-                            </div>
-                            <div class="form-group col-auto">
-                                <label for="steps">Pts/Oct</label>
-                                <input class="form-control" type="number" id="steps" name="freq-steps" value="2" placeholder="2" min="1" max="50">
+                            <div class="form-row freq-sweep">
+                                <div class="col-auto">
+                                    Sweep
+                                </div>
+                                <div class="form-group col-auto">
+                                    <label for="freq1">Start</label>
+                                    <input class="form-control" type="number" id="freq1" name="freq1" step="1" value="20" placeholder="20" max="150000" min="20">
+                                </div>
+                                <div class="form-group col-auto">
+                                    <label for="freq2">Stop</label>
+                                    <input class="form-control" type="number" id="freq2" name="freq2" step="1" value="40000" placeholder="40000" max="150000" min="20">
+                                </div>
+                                <div class="form-group col-auto">
+                                    <label for="steps">Pts/Oct</label>
+                                    <input class="form-control" type="number" id="steps" name="freq-steps" value="2" placeholder="2" min="1" max="50">
+                                </div>
                             </div>
                         </div>
-                        <div class="form-row">
-                            <h5>Amplitude (Volt)</h5>
-                        </div>
-                        <div class="form-row amp-static">
-                            <div class="col-auto">
-                                Static
+                        <div class="border border-primary rounded p-3 m-1">
+                            <div class="form-row">
+                                <h5>Amplitude (Volt)</h5>
                             </div>
-                            <div class="form-group col-auto">
-                                <label for="amp">Amplitude</label>
-                                <input class="form-control" type="number" id="amp" name="amp" step="0.001" value="1"  placeholder="1" max="6" min="0.001">
+                            <div class="form-row amp-static">
+                                <div class="col-auto">
+                                    Static
+                                </div>
+                                <div class="form-group col-auto">
+                                    <label for="amp">Amplitude</label>
+                                    <input class="form-control" type="number" id="amp" name="amp" step="0.001" value="1"  placeholder="1" max="6" min="0.001">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-row amp-sweep">
-                            <div class="col-auto">
-                                Sweep
-                            </div>
-                            <div class="form-group col-auto">
-                                <label for="amp1">Start</label>
-                                <input class="form-control" style="width: 101px" type="number" id="amp1" name="amp1" step=".001" value="0.001" placeholder="0.1" max="6">
-                            </div>
-                            <div class="form-group col-auto">
-                                <label for="amp2">Stop</label>
-                                <input class="form-control" style="width: 101px" type="number" id="amp2" name="amp2" step=".001" value="5" placeholder="5" max="6">
-                            </div>
-                            <div class="form-group col-auto">
-                                <label for="steps">Pts/Oct</label>
-                                <input class="form-control" style="width: 50px" type="number" id="steps" name="amp-steps" value="2" placeholder="2" min="1" max="50">
+                            <div class="form-row amp-sweep">
+                                <div class="col-auto">
+                                    Sweep
+                                </div>
+                                <div class="form-group col-auto">
+                                    <label for="amp1">Start</label>
+                                    <input class="form-control" style="width: 101px" type="number" id="amp1" name="amp1" step=".001" value="0.01" placeholder="0.1" max="6">
+                                </div>
+                                <div class="form-group col-auto">
+                                    <label for="amp2">Stop</label>
+                                    <input class="form-control" style="width: 101px" type="number" id="amp2" name="amp2" step=".001" value="5" placeholder="5" max="6">
+                                </div>
+                                <div class="form-group col-auto">
+                                    <label for="steps">Pts/Oct</label>
+                                    <input class="form-control" style="width: 50px" type="number" id="steps" name="amp-steps" value="2" placeholder="2" min="1" max="50">
+                                </div>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary" id="start-measurement">Start Measurement</button>
@@ -97,14 +107,7 @@
                     </form>
                 </div>
                 <div class="col-sm-7">
-                    <div id="output-configuration">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="keep-measurements"/>
-                            <label class="form-check-label" for="keep-measurements">
-                                Keep old measurements
-                            </label>
-                        </div>
-                    </div>
+
                     <div id="output">
                         <h2>Current Measurement</h2>
                         <div id="output_measurement" class="jumbotron">
@@ -113,6 +116,14 @@
                         </div>
                         <h2>History</h2>
                         <div id="output-actions">
+                            <div id="output-configuration">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="keep-measurements"/>
+                                    <label class="form-check-label" for="keep-measurements">
+                                        Keep old measurements
+                                    </label>
+                                </div>
+                            </div>
                             <button class="btn btn-primary" id="output-clear-all">Clear history</button>
                         </div>
                         <div id="output_old"></div>
