@@ -13,6 +13,9 @@ class GPIB:
         self.encoding = encoding
         self.remote_address = remote_address
 
+    def __enter__(self):
+        return self
+
     def init(self):
         pass
 
