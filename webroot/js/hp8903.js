@@ -30,6 +30,7 @@ function measure(url, type, steps, freq1, freq2, amp1, amp2, title) {
             title: title
         },
         headers: { 'x-content-encoding': 'base64' },
+        async : false, /* Asynchronous because we may start multiple measurements and we have only one resource */
         success: measure_success
     }).fail(function(jqXHR, textStatus, errorThrown) {
         alert("AJAX request failed: " + textStatus + "\n" + errorThrown);
