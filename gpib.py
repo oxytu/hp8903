@@ -3,11 +3,6 @@ import serial
 PARITY_NONE = serial.PARITY_NONE
 
 class GPIB:
-    serial = None
-    encoding = None
-    debug = False
-    remote_address = None
-
     def __init__(self, device, baudrate, timeout, parity, rtscts, remote_address, encoding):
         self.serial = serial.Serial(device, baudrate, timeout=timeout, parity=parity, rtscts=rtscts)
         self.encoding = encoding

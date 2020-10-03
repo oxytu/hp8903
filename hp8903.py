@@ -35,11 +35,11 @@ class Trigger(Enum):
 	TRIG_SETTLING = "T3"
 
 class HP8903:
-	gpib = None
+	_lock = threading.Lock()
 
 	def __init__(self, gpib):
 		self.gpib = gpib
-		self._lock = threading.Lock()
+		self._lock = HP8903._lock
 
 	def read_left(self):
 		return parse_exp_notation(self.gpib.send_with_return("RL"))
