@@ -1,5 +1,6 @@
 from enum import Enum
 import re
+import fasteners
 
 # TODO
 	#command += 'FA30KZ' # Freq Start
@@ -44,6 +45,7 @@ class HP8903:
 	def read_right(self):
 		return parse_exp_notation(self.gpib.send_with_return("RR"))
 
+	@fasteners.interprocess_locked('hp8903.lck')
 	def generic_sweep(self, init_command, start, end, steps_per_octave, conversion_function, persistor):
 		self.gpib.send_command_with_return_eoi(init_command)
 
