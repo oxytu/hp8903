@@ -1,6 +1,7 @@
 from enum import Enum
 import re
 import fasteners
+import threading
 
 # TODO
 	#command += 'FA30KZ' # Freq Start
@@ -38,6 +39,7 @@ class HP8903:
 
 	def __init__(self, gpib):
 		self.gpib = gpib
+		self._lock = threading.Lock()
 
 	def read_left(self):
 		return parse_exp_notation(self.gpib.send_with_return("RL"))
