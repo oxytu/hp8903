@@ -14,11 +14,11 @@ class GPIB:
         self.remote_address = remote_address
 
     def __enter__(self):
-        serial.__enter__()
+        self.serial.__enter__()
         return self
 
     def __exit__(self):
-        serial.__exit__()
+        self.serial.__exit__()
 
     def init(self):
         pass
