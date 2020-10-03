@@ -112,9 +112,6 @@ def measure(args, output) -> None:
 	with prologix.Prologix(config['serialdevice'], config['baudrate'], int(config['timeout']), parity, rtscts, config['gpib_remote_addr'], ENCODING) as gpib:
 		if DEBUG:
 			gpib.debug()
-
-		gpib.init()
-
 		hp_device = hp8903.HP8903(gpib)
 
 		if (args.measure == "LVL_FRQ"):

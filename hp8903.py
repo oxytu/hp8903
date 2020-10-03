@@ -47,6 +47,7 @@ class HP8903:
 
 	@fasteners.interprocess_locked('hp8903.lck')
 	def generic_sweep(self, init_command, start, end, steps_per_octave, conversion_function, persistor):
+		self.gpib.init()
 		self.gpib.send_command_with_return_eoi(init_command)
 
 		increase_factor = 2**(1/steps_per_octave)
