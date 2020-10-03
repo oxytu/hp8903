@@ -107,7 +107,7 @@ def init_argparse() -> argparse.ArgumentParser:
 	return parser
 
 def measure(args, output) -> None:
-	global DEBUG
+	global DEBUG, ENCODING
 
 	with prologix.Prologix(config['serialdevice'], config['baudrate'], int(config['timeout']), parity, rtscts, config['gpib_remote_addr'], ENCODING) as gpib:
 		if DEBUG:
