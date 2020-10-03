@@ -40,5 +40,5 @@ class GPIB:
 
     def send_command_with_return_eoi(self, string):
         self.send(string)
-        self.end("++read eoi")
+        self.send("++read eoi")
         return self.readline()
