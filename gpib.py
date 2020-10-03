@@ -35,10 +35,10 @@ class GPIB:
         return self.serial.readline().decode(self.encoding)
 
     def send_with_return(self, string):
-        self.gpib_send(string)
+        self.send(string)
         return self.readline()
 
     def send_command_with_return_eoi(self, string):
-        self.gpib_send(string)
-        self.gpib_send("++read eoi")
+        self.send(string)
+        self.end("++read eoi")
         return self.readline()
