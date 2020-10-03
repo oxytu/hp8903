@@ -17,8 +17,8 @@ class GPIB:
         self.serial.__enter__()
         return self
 
-    def __exit__(self):
-        self.serial.__exit__()
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        return self.serial.__exit__(exc_type, exc_value, exc_traceback)
 
     def init(self):
         pass
