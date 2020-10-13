@@ -4,11 +4,12 @@ function uniqId() {
   }
 
 function measure_success(data, textStatus, jqXHR, title, csvData = null) {
-    $("#output_measurement > .output_date").text("<b>" + title + "</b> - Date: " + new Date());
+    $("#output_measurement > .output_date").html("<b>" + title + "</b> - Date: " + new Date());
+    var link = $("#output_measurement > .download_csv > .download_csv_link");
+
     if (csvData != null) {
         $("#output_measurement > .download_csv > .csv_content").text(csvData);
 
-        var link = $("#output_measurement > .download_csv > .download_csv_link");
         link.attr('download', "measurement-" + title + ".csv");
         link.click(function() {
             var csvContent = $(this).siblings('.csv_content').text();
@@ -17,6 +18,8 @@ function measure_success(data, textStatus, jqXHR, title, csvData = null) {
             $(this).attr("href", url);
             $(this).click();
         });
+    } else {
+        link.hide();
     }
     $("#output_measurement > .output_image").attr("src", "data:image/png;base64," + data);
     
@@ -28,7 +31,7 @@ function measure_success(data, textStatus, jqXHR, title, csvData = null) {
 }
 
 function graph(csvData, title) {
-    return $.ajax({
+    $.ajax({
         url: '/graph',
         type: 'post',
         data: {
@@ -45,7 +48,33 @@ function graph(csvData, title) {
     })
 }
 
-function measure_csv(type, steps, freq1, freq2, amp1, amp2, title) {
+function measure_csv(url, type, steps, freq1, freq2, amp1, amp2, title) {
+    var csv = '';
+    return $.ajax({
+        url: '/measure',
+        type: 'post',
+        data: {
+            type: type,
+            steps: steps,
+            freq1: freq1,
+            freq2: freq2,
+            amp1: amp1,
+            amp2: amp2,
+            title: title
+        },
+        success: function(csvData, textStatus, jqXHR) {
+            csv = csvData;
+        },
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        alert("AJAX request 'measure_csv' failed: " + textStatus + "\n" + errorThrown);
+    }).then(function() {
+        graph(csv, title);
+    })
+}
+
+function measure(url, type, steps, freq1, freq2, amp1, amp2, title) {
+    $("#start-measurement").prop("disabled",true);
+    $("#measurement-in-progress").show();
     return $.ajax({
         url: '/measure_and_graph',
         type: 'post',
@@ -58,31 +87,10 @@ function measure_csv(type, steps, freq1, freq2, amp1, amp2, title) {
             amp2: amp2,
             title: title
         },
-        success: function(csvData, textStatus, jqXHR) {
-            graph(csvData, title);
-        }
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-        alert("AJAX request 'measure_csv' failed: " + textStatus + "\n" + errorThrown);
-    })
-}
-
-function measure(url, type, steps, freq1, freq2, amp1, amp2, title) {
-    $("#start-measurement").prop("disabled",true);
-    $("#measurement-in-progress").show();
-    return $.ajax({
-        url: url,
-        type: 'post',
-        data: {
-            type: type,
-            steps: steps,
-            freq1: freq1,
-            freq2: freq2,
-            amp1: amp1,
-            amp2: amp2,
-            title: title
-        },
         headers: { 'x-content-encoding': 'base64' },
-        success: measure_success
+        success: function(data, textStatus, jqXHR) {
+            measure_success(data, textStatus, jqXHR, title);
+        }
     }).fail(function(jqXHR, textStatus, errorThrown) {
         alert("AJAX request failed: " + textStatus + "\n" + errorThrown);
     }).always(function() {
@@ -125,14 +133,14 @@ function submit_measure(form, event) {
         steps = freq_steps;
     } else if (type.startsWith("MULTI_")) {
         if (type == "MULTI_FR_THD") {
-            measure(url, "LVL_FRQ", freq_steps, freq1, freq2, amp, amp2, title + " (Freq. Resp.)").then(
-            measure(url, "THDLV_LVL", amp_steps, freq, freq2, amp1, amp2, title + " (Clipping Behaviour)")).then(
-            measure(url, "THDLV_FRQ", freq_steps, freq1, freq2, amp, amp2, title + " (THD+N)"));
+            measure_csv(url, "LVL_FRQ", freq_steps, freq1, freq2, amp, amp2, title + " (Freq. Resp.)").then(
+            measure_csv(url, "THDLV_LVL", amp_steps, freq, freq2, amp1, amp2, title + " (Clipping Behaviour)")).then(
+            measure_csv(url, "THDLV_FRQ", freq_steps, freq1, freq2, amp, amp2, title + " (THD+N)"));
         }
         return
     }
 
-    measure(url, type, steps, freq1, freq2, amp1, amp2, title);
+    measure_csv(url, type, steps, freq1, freq2, amp1, amp2, title);
 }
 
 function restoreLocalStorageState() {
