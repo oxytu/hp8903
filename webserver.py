@@ -31,11 +31,14 @@ class Hp8903Server(object):
         output = io.StringIO()
 
         measure.measure(args, output)
+        return output.getvalue()
 
-        image = self.graph(type, title, output.getvalue())
+    @cherrypy.expose
+    def measure_and_graph(self, type=None, steps=None, freq1=None, freq2=None, amp1=None, amp2=None, title=None)
+        csv = self.measure(type, steps, freq1, freq2, amp1, amp2, title)
+
+        image = self.graph(type, title, csv)
         return image
-
-        #return f"Type={type}, steps={steps}, freq1={freq1}, freq2={freq2}, amp1={amp1}, amp2={amp2}\n{output.getvalue()}"
 
     @cherrypy.expose
     def graph(self, type=None, title=None, csv=None):

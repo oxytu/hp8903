@@ -3,8 +3,21 @@ function uniqId() {
     return Math.round(new Date().getTime() + (Math.random() * 10000));
   }
 
-function measure_success(data, textStatus, jqXHR) {
-    $("#output_measurement > .output_date").text("Date: " + new Date());
+function measure_success(data, textStatus, jqXHR, title, csvData = null) {
+    $("#output_measurement > .output_date").text("<b>" + title + "</b> - Date: " + new Date());
+    if (csvData != null) {
+        $("#output_measurement > .download_csv > .csv_content").text(csvData);
+
+        var link = $("#output_measurement > .download_csv > .download_csv_link");
+        link.attr('download', "measurement-" + title + ".csv");
+        link.click(function() {
+            var csvContent = $(this).siblings('.csv_content').text();
+            var data = new Blob([csvContent], {type: 'text/csv'});
+            var url = window.URL.createObjectURL(data);
+            $(this).attr("href", url);
+            $(this).click();
+        });
+    }
     $("#output_measurement > .output_image").attr("src", "data:image/png;base64," + data);
     
     if ($("#keep-measurements").prop('checked')) {
@@ -12,6 +25,45 @@ function measure_success(data, textStatus, jqXHR) {
     }
 
     localStorage.setItem('measurements', $('#output_old').html());
+}
+
+function graph(csvData, title) {
+    return $.ajax({
+        url: '/graph',
+        type: 'post',
+        data: {
+            type: type,
+            title: title,
+            csv: csvData
+        },
+        headers: { 'x-content-encoding': 'base64' },
+        success: function(graph, textStatus, jqXHR) {
+            measure_success(graph, textStatus, jqXHR, title, csvData);
+        }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        alert("AJAX request 'graph' failed: " + textStatus + "\n" + errorThrown);
+    })
+}
+
+function measure_csv(type, steps, freq1, freq2, amp1, amp2, title) {
+    return $.ajax({
+        url: '/measure_and_graph',
+        type: 'post',
+        data: {
+            type: type,
+            steps: steps,
+            freq1: freq1,
+            freq2: freq2,
+            amp1: amp1,
+            amp2: amp2,
+            title: title
+        },
+        success: function(csvData, textStatus, jqXHR) {
+            graph(csvData, title);
+        }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        alert("AJAX request 'measure_csv' failed: " + textStatus + "\n" + errorThrown);
+    })
 }
 
 function measure(url, type, steps, freq1, freq2, amp1, amp2, title) {
