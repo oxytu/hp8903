@@ -17,6 +17,7 @@ function measure_success(data, textStatus, jqXHR, title, csvData = null) {
             var url = window.URL.createObjectURL(data);
             $(this).attr("href", url);
         });
+        link.show();
     } else {
         link.hide();
     }
