@@ -71,8 +71,7 @@ function measure_csv(url, type, steps, freq1, freq2, amp1, amp2, title) {
 }
 
 function measure(url, type, steps, freq1, freq2, amp1, amp2, title) {
-    $("#start-measurement").prop("disabled",true);
-    $("#measurement-in-progress").show();
+
     return $.ajax({
         url: '/measure_and_graph',
         type: 'post',
@@ -91,15 +90,15 @@ function measure(url, type, steps, freq1, freq2, amp1, amp2, title) {
         }
     }).fail(function(jqXHR, textStatus, errorThrown) {
         alert("AJAX request failed: " + textStatus + "\n" + errorThrown);
-    }).always(function() {
-        $("#start-measurement").prop("disabled", false);
-        $("#measurement-in-progress").hide();
     })
 }
 
 function submit_measure(form, event) {
     // Stop form from submitting normally
     event.preventDefault();
+
+    $("#start-measurement").prop("disabled",true);
+    $("#measurement-in-progress").show();
 
     // Get some values from elements on the page:
     var $form = form,
@@ -121,15 +120,7 @@ function submit_measure(form, event) {
 
     var steps = 1;
 
-    if (type.endsWith("_LVL")) {
-        freq1 = freq;
-        // freq2 is ignored in implementation
-        steps = amp_steps;
-    } else if (type.endsWith("_FRQ")) {
-        amp1 = amp;
-        // amp2 is ignored in implementation
-        steps = freq_steps;
-    } else if (type.startsWith("MULTI_")) {
+    if (type.startsWith("MULTI_")) {
         if (type == "MULTI_FR_THD_LVL") {
             measure_csv(url, "LVL_FRQ", freq_steps, freq1, freq2, amp, amp2, title + " (Freq. Resp.)").then(
             measure_csv(url, "THDLV_LVL", amp_steps, freq, freq2, amp1, amp2, title + " (Clipping Behaviour)")).then(
@@ -138,10 +129,22 @@ function submit_measure(form, event) {
             measure_csv(url, "LVL_FRQ", freq_steps, freq1, freq2, amp, amp2, title + " (Freq. Resp.)").then(
             measure_csv(url, "THDLV_FRQ", freq_steps, freq1, freq2, amp, amp2, title + " (THD+N)"));
         }
-        return
-    }
+    } else {
+        if (type.endsWith("_LVL")) {
+            freq1 = freq;
+            // freq2 is ignored in implementation
+            steps = amp_steps;
+        } else if (type.endsWith("_FRQ")) {
+            amp1 = amp;
+            // amp2 is ignored in implementation
+            steps = freq_steps;
+        }
 
-    measure_csv(url, type, steps, freq1, freq2, amp1, amp2, title);
+        measure_csv(url, type, steps, freq1, freq2, amp1, amp2, title);
+    }   
+
+    $("#start-measurement").prop("disabled", false);
+    $("#measurement-in-progress").hide();
 }
 
 function restoreLocalStorageState() {
