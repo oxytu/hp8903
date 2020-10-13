@@ -130,9 +130,12 @@ function submit_measure(form, event) {
         // amp2 is ignored in implementation
         steps = freq_steps;
     } else if (type.startsWith("MULTI_")) {
-        if (type == "MULTI_FR_THD") {
+        if (type == "MULTI_FR_THD_LVL") {
             measure_csv(url, "LVL_FRQ", freq_steps, freq1, freq2, amp, amp2, title + " (Freq. Resp.)").then(
             measure_csv(url, "THDLV_LVL", amp_steps, freq, freq2, amp1, amp2, title + " (Clipping Behaviour)")).then(
+            measure_csv(url, "THDLV_FRQ", freq_steps, freq1, freq2, amp, amp2, title + " (THD+N)"));
+        } else if (type == "MULTI_FR_THD") {
+            measure_csv(url, "LVL_FRQ", freq_steps, freq1, freq2, amp, amp2, title + " (Freq. Resp.)").then(
             measure_csv(url, "THDLV_FRQ", freq_steps, freq1, freq2, amp, amp2, title + " (THD+N)"));
         }
         return
