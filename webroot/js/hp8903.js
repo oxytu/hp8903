@@ -11,12 +11,11 @@ function measure_success(data, textStatus, jqXHR, title, csvData = null) {
         $("#output_measurement > .download_csv > .csv_content").text(csvData);
 
         link.attr('download', "measurement-" + title + ".csv");
-        link.click(function() {
+        link.mousedown(function() {
             var csvContent = $(this).siblings('.csv_content').text();
             var data = new Blob([csvContent], {type: 'text/csv'});
             var url = window.URL.createObjectURL(data);
             $(this).attr("href", url);
-            $(this).click();
         });
     } else {
         link.hide();
@@ -30,7 +29,7 @@ function measure_success(data, textStatus, jqXHR, title, csvData = null) {
     localStorage.setItem('measurements', $('#output_old').html());
 }
 
-function graph(csvData, title) {
+function graph(type, csvData, title) {
     $.ajax({
         url: '/graph',
         type: 'post',
@@ -68,7 +67,7 @@ function measure_csv(url, type, steps, freq1, freq2, amp1, amp2, title) {
     }).fail(function(jqXHR, textStatus, errorThrown) {
         alert("AJAX request 'measure_csv' failed: " + textStatus + "\n" + errorThrown);
     }).then(function() {
-        graph(csv, title);
+        graph(type, csv, title);
     })
 }
 
