@@ -34,7 +34,7 @@ class Hp8903Server(object):
         return output.getvalue()
 
     @cherrypy.expose
-    def measure_and_graph(self, type=None, steps=None, freq1=None, freq2=None, amp1=None, amp2=None, title=None)
+    def measure_and_graph(self, type=None, steps=None, freq1=None, freq2=None, amp1=None, amp2=None, title=None):
         csv = self.measure(type, steps, freq1, freq2, amp1, amp2, title)
 
         image = self.graph(type, title, csv)
