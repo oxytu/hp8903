@@ -180,7 +180,7 @@ function inject_download() {
 }
 
 function init_downloads() {
-    $("#output_measurement > .download_csv > .download_csv_link").mousedown(inject_download);
+    $(".download_csv_link").mousedown(inject_download);
 }
 
 function init_hp8903() {
