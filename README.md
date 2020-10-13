@@ -14,6 +14,10 @@ I will try to add other measurement types.
 Features
 ========
 
+Integrated webserver to do remote measurements (very basic but functional UI) - allowing CSV download.
+
+![Example image](doc/webserver.png)
+
 Do the measurement witha Prologix GPIB interface, configured to provide the connection with a 
 serial port.
 
@@ -36,5 +40,8 @@ Configuration
 ```measure.py``` is statically configured through ```config.yml``` (Serial port, BAUD rate). Measurement configuration is done via command line arguments.
 
 ```graph.py``` has no internal configuration, customize it using command line arguments.
+
+```webserver.py``` can simply be called and will start a publicly available webserver on Port 8080. This component uses
+the other two python files, so be sure that ```config.yml``` contains sensible settings.
 
 The parameter ```--help``` will give you details about the command line arguments.
