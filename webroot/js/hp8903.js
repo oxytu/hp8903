@@ -42,6 +42,8 @@ function graph(type, csvData, title) {
 }
 
 function measure_csv(url, type, steps, freq1, freq2, amp1, amp2, title) {
+    $("#start-measurement").prop("disabled",true);
+    $("#measurement-in-progress").show();
     var csv = '';
     return $.ajax({
         url: '/measure',
@@ -62,6 +64,9 @@ function measure_csv(url, type, steps, freq1, freq2, amp1, amp2, title) {
         alert("AJAX request 'measure_csv' failed: " + textStatus + "\n" + errorThrown);
     }).then(function() {
         graph(type, csv, title);
+    }).always(function() {
+        $("#start-measurement").prop("disabled", false);
+        $("#measurement-in-progress").hide();
     })
 }
 
