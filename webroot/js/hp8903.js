@@ -9,15 +9,8 @@ function measure_success(data, textStatus, jqXHR, title, csvData = null) {
 
     if (csvData != null) {
         $("#output_measurement > .download_csv > .csv_content").text(csvData);
-
+        link.mousedown(inject_download);
         link.attr('download', "measurement-" + title + ".csv");
-        link.mousedown(function() {
-            var csvContent = $(this).siblings('.csv_content').text();
-            var data = new Blob([csvContent], {type: 'text/csv'});
-            var url = window.URL.createObjectURL(data);
-            $(this).attr("href", url);
-        });
-        link.show();
     } else {
         link.hide();
     }
@@ -179,6 +172,17 @@ function show_hide_formcontrols() {
     }
 }
 
+function inject_download() {
+    var csvContent = $(this).siblings('.csv_content').text();
+    var data = new Blob([csvContent], {type: 'text/csv'});
+    var url = window.URL.createObjectURL(data);
+    $(this).attr("href", url);
+}
+
+function init_downloads() {
+    $("#output_measurement > .download_csv > .download_csv_link").mousedown(inject_download);
+}
+
 function init_hp8903() {
     $( "#measure-form" ).submit(function( event ) {
         submit_measure($(this), event);
@@ -198,5 +202,7 @@ function init_hp8903() {
     show_hide_formcontrols();
 
     restoreLocalStorageState();
+
+    init_downloads();
 
 }
