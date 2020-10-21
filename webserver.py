@@ -53,7 +53,7 @@ class Hp8903Server(object):
         csv = output.getvalue()
 
         if (self.persist_measurement):
-            with open(self.get_measurement_filename(title, "csv")) as writer:
+            with open(self.get_measurement_filename(title, "csv"), "w") as writer:
                 writer.write(csv)
 
         return csv
@@ -75,7 +75,7 @@ class Hp8903Server(object):
         output_buffer.seek(0)
 
         if (self.persist_measurement):
-            with open(self.get_measurement_filename(title, "png")) as writer:
+            with open(self.get_measurement_filename(title, "png"), "w") as writer:
                 writer.write(file_generator(output_buffer))
                 output_buffer.seek(0)
 
