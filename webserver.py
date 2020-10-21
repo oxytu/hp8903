@@ -75,8 +75,8 @@ class Hp8903Server(object):
         output_buffer.seek(0)
 
         if (self.persist_measurement):
-            with open(self.get_measurement_filename(title, "png"), "w") as writer:
-                writer.write(file_generator(output_buffer))
+            with open(self.get_measurement_filename(title, "png"), "wb") as writer:
+                writer.write(output_buffer.read())
                 output_buffer.seek(0)
 
         if "x-content-encoding" in cherrypy.request.headers and cherrypy.request.headers["x-content-encoding"] == "base64":
