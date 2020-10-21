@@ -161,7 +161,13 @@ function restoreLocalStorageState() {
 
 function show_hide_formcontrols() {
     var measurement = $("#type").val();
-    if (measurement.endsWith("_FRQ")) {
+    if (measurement.startsWith("MULTI_")) {
+        $(".amp-static").show();
+        $(".amp-sweep").show();
+
+        $(".freq-static").show();
+        $(".freq-sweep").show();
+    } else if (measurement.endsWith("_FRQ")) {
         //.find(':input').prop("disabled", false)
         $(".amp-static").show();
         $(".amp-sweep").hide();
@@ -174,13 +180,7 @@ function show_hide_formcontrols() {
 
         $(".freq-static").show();
         $(".freq-sweep").hide();
-    } else if (measurement.startsWith("MULTI_")) {
-        $(".amp-static").show();
-        $(".amp-sweep").show();
-
-        $(".freq-static").show();
-        $(".freq-sweep").show();
-    }
+    } 
 }
 
 function inject_download() {

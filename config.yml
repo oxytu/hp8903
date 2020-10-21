@@ -2,3 +2,7 @@ serialdevice: COM2
 baudrate: 115200
 timeout: 2
 gpib_remote_addr: 28
+webserver:
+    persist_measurements: true
+    bind_address: 0.0.0.0
+    bind_port: 8080
